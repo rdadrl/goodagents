@@ -1,6 +1,7 @@
 package Group2;
 
 import Group2.Agents.*;
+import Group9.agent.RandomIntruderAgent;
 import Group9.agent.factories.IAgentFactory;
 import Interop.Agent.Guard;
 import Interop.Agent.Intruder;
@@ -22,7 +23,7 @@ public class AgentsFactory implements IAgentFactory {
     public List<Intruder> createIntruders(int number) {
         ArrayList<Intruder> intruders = new ArrayList<>();
         for(int i=0;i<number;i++){
-            Intruder intruder = new TargetFinder(i);
+            Intruder intruder = new Morontruder();
             intruders.add(intruder);
         }
         return intruders;
