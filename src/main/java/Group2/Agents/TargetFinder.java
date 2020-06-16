@@ -133,7 +133,7 @@ public class TargetFinder implements Intruder {
 
         //Recompute the path every 10 turns in case the intruder discovered new obstacles
         if (counter == 0) {
-            computePath(sourcePos, targetPos);
+            computeAStarPath(sourcePos, targetPos);
             counter = 5;
         }
 
@@ -144,7 +144,7 @@ public class TargetFinder implements Intruder {
 
         //Follow the path by aiming at every subSizePath points
         if (path.size() < subPathSize) subTarget = new Point(targetPos.getX(), targetPos.getY());
-        else subTarget = new Point(path.get(subPathSize).getPos().getX(), path.get(subPathSize).getPos().getY());
+        else subTarget = new Point(path.get(subPathSize-1).getPos().getX(), path.get(subPathSize-1).getPos().getY());
 
         double deltaX = subTarget.getX() - sourcePos.getX();
         double deltaY = subTarget.getY() - sourcePos.getY();
@@ -153,28 +153,26 @@ public class TargetFinder implements Intruder {
         System.out.println("Dir: " +dir.getDegrees());
 
 
-        Angle rotationAngle = Angle.fromDegrees((dir.getDegrees() - this.currentMap.getCurrentAngle().getDegrees())%360);
+        Angle rotationAngle = dir.getDistance(this.currentMap.getCurrentAngle());
+        if(deltaX > 0) rotationAngle = Angle.fromDegrees(-rotationAngle.getDegrees());
 
         System.out.println("Rotation angle: " +rotationAngle.getDegrees());
 
 
-        if (Math.abs(rotationAngle.getDegrees()) < 5) {
+        if (Math.abs(rotationAngle.getDegrees()) < 3) {
             System.out.println("Move forward");
             action = new Move(maxDistance);
         }
         else if (rotationAngle.getDegrees() > maxRotationAngle.getDegrees()) {
             System.out.println("Rotate from max angle");
-            System.out.println("Rot angle: " +rotationAngle.getDegrees());
             action = new Rotate(maxRotationAngle);
         }
         else if (rotationAngle.getDegrees() < -maxRotationAngle.getDegrees()) {
-            System.out.println("Rotate from min angle");
-            System.out.println("Rot angle: " +rotationAngle.getDegrees());
+            System.out.println("Rotate from -max angle");
             action = new Rotate(Angle.fromDegrees(-maxRotationAngle.getDegrees()));
         }
         else {
             System.out.println("Rotate from dir");
-            System.out.println("Rot angle: " +rotationAngle.getDegrees());
             action = new Rotate(rotationAngle);
         }
 
@@ -186,13 +184,27 @@ public class TargetFinder implements Intruder {
 
 
 
-    public void computePath(Point sourcePos, Point targetPos) {
+    public void computeDijkstraPath(Point sourcePos, Point targetPos) {
         Graph graph = new Graph(this.currentMap.getCurrentMap());
         PathFinding finder = new PathFinding(graph);
         Node source = graph.getNode(sourcePos);
         Node target = graph.getNode(targetPos);
         if (target != null)
             path = (LinkedList) finder.shortestPathDijkstra(source, target);
+        else {
+            System.out.println("WARNING: Target not found");
+            path = null;
+        }
+    }
+
+
+    public void computeAStarPath(Point sourcePos, Point targetPos) {
+        Graph graph = new Graph(this.currentMap.getCurrentMap());
+        PathFinding finder = new PathFinding(graph);
+        Node source = graph.getNode(sourcePos);
+        Node target = graph.getNode(targetPos);
+        if (target != null)
+            path = (LinkedList) finder.aStar(source, target);
         else {
             System.out.println("WARNING: Target not found");
             path = null;
