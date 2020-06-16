@@ -30,72 +30,72 @@ public class Graph {
             //Top node
             if(i > matrixMap[0].length) {
                 Node neighbour = this.nodes.get(i - matrixMap[0].length);
-                double weight = 0;
-                //if(neighbour.getObject() == ObjectPerceptType.Wall) weight = 1000;
-                //else if(neighbour.getObject()== ObjectPerceptType.Door || neighbour.getObject()==ObjectPerceptType.Window) weight = 100;
+                double weight = 1;
+                if(neighbour.getObject() == ObjectPerceptType.Wall) weight = 1000;
+                else if(neighbour.getObject()== ObjectPerceptType.Door || neighbour.getObject()==ObjectPerceptType.Window) weight = 100;
                 this.addEdge(current, neighbour, weight);
             }
 
             //Bottom node
             if(i < (matrixMap.length -1)*matrixMap[0].length) {
                 Node neighbour = this.nodes.get(i + matrixMap[0].length);
-                double weight = 0;
-                //if(neighbour.getObject() == ObjectPerceptType.Wall) weight = 1000;
-                //else if(neighbour.getObject()== ObjectPerceptType.Door || neighbour.getObject()==ObjectPerceptType.Window) weight = 100;
+                double weight = 1;
+                if(neighbour.getObject() == ObjectPerceptType.Wall) weight = 1000;
+                else if(neighbour.getObject()== ObjectPerceptType.Door || neighbour.getObject()==ObjectPerceptType.Window) weight = 100;
                 this.addEdge(current, neighbour, weight);
             }
 
             //Left node
             if(i % matrixMap[0].length != 0) {
                 Node neighbour = this.nodes.get(i - 1);
-                double weight = 0;
-                //if(neighbour.getObject() == ObjectPerceptType.Wall) weight = 1000;
-                //else if(neighbour.getObject()== ObjectPerceptType.Door || neighbour.getObject()==ObjectPerceptType.Window) weight = 100;
+                double weight = 1;
+                if(neighbour.getObject() == ObjectPerceptType.Wall) weight = 1000;
+                else if(neighbour.getObject()== ObjectPerceptType.Door || neighbour.getObject()==ObjectPerceptType.Window) weight = 100;
                 this.addEdge(current, neighbour, weight);
             }
 
             //Right node
             if(i % matrixMap[0].length != matrixMap[0].length -1 ) {
                 Node neighbour = this.nodes.get(i + 1);
-                double weight = 0;
-                //if(neighbour.getObject() == ObjectPerceptType.Wall) weight = 1000;
-                //else if(neighbour.getObject()== ObjectPerceptType.Door || neighbour.getObject()==ObjectPerceptType.Window) weight = 100;
+                double weight = 1;
+                if(neighbour.getObject() == ObjectPerceptType.Wall) weight = 1000;
+                else if(neighbour.getObject()== ObjectPerceptType.Door || neighbour.getObject()==ObjectPerceptType.Window) weight = 100;
                 this.addEdge(current, neighbour, weight);
             }
 
             //Top left node
             if(i > matrixMap[0].length && i % matrixMap[0].length != 0) {
                 Node neighbour = this.nodes.get(i - matrixMap[0].length - 1);
-                double weight = 0;
-                //if(neighbour.getObject() == ObjectPerceptType.Wall) weight = 1000;
-                //else if(neighbour.getObject()== ObjectPerceptType.Door || neighbour.getObject()==ObjectPerceptType.Window) weight = 100;
+                double weight = 1;
+                if(neighbour.getObject() == ObjectPerceptType.Wall) weight = 1000;
+                else if(neighbour.getObject()== ObjectPerceptType.Door || neighbour.getObject()==ObjectPerceptType.Window) weight = 100;
                 this.addEdge(current, neighbour, weight);
             }
 
             //Top right node
             if(i > matrixMap[0].length && i % matrixMap[0].length != matrixMap[0].length -1) {
                 Node neighbour = this.nodes.get(i - matrixMap[0].length + 1);
-                double weight = 0;
-                //if(neighbour.getObject() == ObjectPerceptType.Wall) weight = 1000;
-                //else if(neighbour.getObject()== ObjectPerceptType.Door || neighbour.getObject()==ObjectPerceptType.Window) weight = 100;
+                double weight = 1;
+                if(neighbour.getObject() == ObjectPerceptType.Wall) weight = 1000;
+                else if(neighbour.getObject()== ObjectPerceptType.Door || neighbour.getObject()==ObjectPerceptType.Window) weight = 100;
                 this.addEdge(current, neighbour, weight);
             }
 
             //Bottom left node
             if(i < (matrixMap.length -1)*matrixMap[0].length && i % matrixMap[0].length != 0) {
                 Node neighbour = this.nodes.get(i + matrixMap[0].length - 1);
-                double weight = 0;
-                //if(neighbour.getObject() == ObjectPerceptType.Wall) weight = 1000;
-                //else if(neighbour.getObject()== ObjectPerceptType.Door || neighbour.getObject()==ObjectPerceptType.Window) weight = 100;
+                double weight = 1;
+                if(neighbour.getObject() == ObjectPerceptType.Wall) weight = 1000;
+                else if(neighbour.getObject()== ObjectPerceptType.Door || neighbour.getObject()==ObjectPerceptType.Window) weight = 100;
                 this.addEdge(current,neighbour, weight);
             }
 
             //Bottom right node
             if(i < (matrixMap.length -1)*matrixMap[0].length && i % matrixMap[0].length != matrixMap[0].length -1) {
                 Node neighbour = this.nodes.get(i + matrixMap[0].length + 1);
-                double weight = 0;
-                //if(neighbour.getObject() == ObjectPerceptType.Wall) weight = 1000;
-                //else if(neighbour.getObject()== ObjectPerceptType.Door || neighbour.getObject()==ObjectPerceptType.Window) weight = 100;
+                double weight = 1;
+                if(neighbour.getObject() == ObjectPerceptType.Wall) weight = 1000;
+                else if(neighbour.getObject()== ObjectPerceptType.Door || neighbour.getObject()==ObjectPerceptType.Window) weight = 100;
                 this.addEdge(current, neighbour, weight);
             }
 

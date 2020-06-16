@@ -4,7 +4,6 @@ import Group2.Map.Graph;
 import Group2.Map.GridMap;
 import Group2.Map.Node;
 import Group2.Map.PathFinding;
-import Group2.MapBumf;
 import Interop.Action.IntruderAction;
 import Interop.Action.Move;
 import Interop.Action.Rotate;
@@ -14,11 +13,8 @@ import Interop.Geometry.Direction;
 import Interop.Geometry.Distance;
 import Interop.Geometry.Point;
 import Interop.Percept.IntruderPercepts;
-import Interop.Percept.Vision.ObjectPerceptType;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 
 public class TargetFinder implements Intruder {
     Direction a = null;
@@ -138,27 +134,31 @@ public class TargetFinder implements Intruder {
         //Recompute the path every 10 turns in case the intruder discovered new obstacles
         if (counter == 0) {
             computePath(sourcePos, targetPos);
-            counter = 10;
+            counter = 5;
         }
 
 
         Point subTarget;
-        int subPathSize = 1;
+        int subPathSize = 5;
         System.out.println(this.path);
 
-        //Follow the path by aiming at every 10 points
+        //Follow the path by aiming at every subSizePath points
         if (path.size() < subPathSize) subTarget = new Point(targetPos.getX(), targetPos.getY());
         else subTarget = new Point(path.get(subPathSize).getPos().getX(), path.get(subPathSize).getPos().getY());
-        double deltaX = Math.abs(sourcePos.getX() - subTarget.getX());
-        double deltaY = Math.abs(sourcePos.getY() - subTarget.getY());
-        Direction dir = Direction.fromRadians(Math.atan(deltaY / deltaX));
+
+        double deltaX = subTarget.getX() - sourcePos.getX();
+        double deltaY = subTarget.getY() - sourcePos.getY();
+        //Direction dir = Direction.fromRadians(Math.atan(deltaY / deltaX));
+        Angle dir = Angle.fromRadians(Math.atan2(deltaY, deltaX));
         System.out.println("Dir: " +dir.getDegrees());
-        Angle rotationAngle = dir.getDistance(this.currentMap.getCurrentAngle());
+
+
+        Angle rotationAngle = Angle.fromDegrees((dir.getDegrees() - this.currentMap.getCurrentAngle().getDegrees())%360);
+
         System.out.println("Rotation angle: " +rotationAngle.getDegrees());
-        if(sourcePos.getX() > subTarget.getX()) rotationAngle = Angle.fromDegrees(-rotationAngle.getDegrees());
 
 
-        if (rotationAngle.getDegrees() < 5) {
+        if (Math.abs(rotationAngle.getDegrees()) < 5) {
             System.out.println("Move forward");
             action = new Move(maxDistance);
         }
@@ -168,7 +168,7 @@ public class TargetFinder implements Intruder {
             action = new Rotate(maxRotationAngle);
         }
         else if (rotationAngle.getDegrees() < -maxRotationAngle.getDegrees()) {
-            System.out.println("Rotate from max angle");
+            System.out.println("Rotate from min angle");
             System.out.println("Rot angle: " +rotationAngle.getDegrees());
             action = new Rotate(Angle.fromDegrees(-maxRotationAngle.getDegrees()));
         }
