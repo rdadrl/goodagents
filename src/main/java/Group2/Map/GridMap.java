@@ -335,6 +335,20 @@ public class GridMap {
             if(Math.abs(objectPercept.getPoint().getX()) <= 0.1) {
                 if(objectPercept.getType().isSolid()) {
                     if(objectPercept.getPoint().getDistance(new Point(0,0)).getValue() >= distance) {
+
+//                        //Object point in the agent's cartesian system (agent is at (0,0))
+//                        //Set the point right in front of the agent to a Wall
+//                        Point objectPoint = new Point(objectPercept.getPoint().getX(), objectPercept.getPoint().getY());
+//
+//                         //Get that point in the internal map representation
+//                        double distanceToObject = new Distance(objectPoint, new Point(0,0)).getValue();
+//                        Angle objectAngle = Angle.fromRadians(Math.atan2(objectPoint.getY(), objectPoint.getX()) - Math.PI/2);
+//                        Angle angleInMap = Angle.fromDegrees(currentAngle.getDegrees() + objectAngle.getDegrees());
+//                        int objectXInMap = (int) Math.round(currentPosition.getX() + Math.cos(angleInMap.getRadians())*distanceToObject);
+//                        int objectYInMap = (int) Math.round(currentPosition.getY() + Math.sin(angleInMap.getRadians())*distanceToObject);
+//
+//
+//                        this.currentMap[objectYInMap][objectXInMap] = ObjectPerceptType.Wall;
                         return false;
                     }
                 }

@@ -96,23 +96,23 @@ public class PathFinding {
     }
 
 
+    //A star search
+    //Pseudocode taken from https://en.wikipedia.org/wiki/A*_search_algorithm#Pseudocode
     public List<Node> aStar(Node source, Node target) {
 
-        // The set of discovered nodes that may need to be (re-)expanded.
-        // Initially, only the start node is known.
+        // The set of discovered nodes that may need to be (re-)expanded (initially, only the start node is known)
         PriorityQueue<Node> openSet = new PriorityQueue<>();
         openSet.add(source);
 
-        // For node n, cameFrom[n] is the node immediately preceding it on the cheapest path from start
-        // to n currently known
+        // For node n, cameFrom[n] is the node immediately preceding it on the cheapest path from start to n
         HashMap<Node, Node> cameFrom = new HashMap<>();
 
         // For node n, gScore[n] is the cost of the cheapest path from start to n currently known.
         HashMap<Node, Double> gScore = new HashMap<>();
         gScore.put(source, 0.0);
 
-        // For node n, fScore[n] := gScore[n] + h(n). fScore[n] represents our current best guess as to
-        // how short a path from start to finish can be if it goes through n.
+        // For node n, fScore[n] represents our current best guess as to how short a path from start to finish can be
+        // if it goes through n.
         HashMap<Node, Double> fScore = new HashMap<>();
         double score = new Distance(source.getPos(), target.getPos()).getValue();
         source.setfScore(score);
@@ -133,7 +133,7 @@ public class PathFinding {
                 //Distance from start to the neighbor through current
                 double tentative_gScore = gScore.getOrDefault(current, Double.MAX_VALUE) + this.graph.getEdge(current, neighbour).getWeight();
                 if (tentative_gScore < gScore.getOrDefault(neighbour, Double.MAX_VALUE)) {
-                    // This path to neighbor is better than any previous one
+                    //Currently best known path to neighbour
                     cameFrom.put(neighbour, current);
                     gScore.put(neighbour, tentative_gScore);
                     score = gScore.get(neighbour) + new Distance(neighbour.getPos(), target.getPos()).getValue();
@@ -145,8 +145,6 @@ public class PathFinding {
             }
         }
 
-
-        // Open set is empty but goal was never reached
         System.out.println("GOAL IS NOT REACHABLE");
         return null;
     }

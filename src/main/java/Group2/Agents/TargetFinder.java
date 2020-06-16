@@ -49,7 +49,7 @@ public class TargetFinder implements Intruder {
     @Override
     public IntruderAction getAction(IntruderPercepts percepts) {
         IntruderAction action = null;
-        //System.out.println("View Angle in degrees: " + percepts.getTargetDirection().getDegrees());
+        System.out.println("View Angle in degrees: " + percepts.getTargetDirection().getDegrees());
         Angle maxRotationAngle = percepts.getScenarioIntruderPercepts().getScenarioPercepts().getMaxRotationAngle();
 
 
@@ -83,7 +83,7 @@ public class TargetFinder implements Intruder {
                 //take step u
                 action = new Move(u);
                 this.currentMap.updateMap(action, percepts);
-                System.out.println(currentMap);
+                //System.out.println(currentMap);
                 return action;
             }
 
@@ -141,49 +141,49 @@ public class TargetFinder implements Intruder {
         //Point of the path that the agent will aiming to
         Point subTarget;
         int subPathSize = 2;
-        //System.out.println(this.path);
 
         //Follow the path by aiming at every subSizePath points
         if (path.size() < subPathSize) subTarget = new Point(targetPos.getX(), targetPos.getY());
         else subTarget = new Point(path.get(subPathSize-1).getPos().getX(), path.get(subPathSize-1).getPos().getY());
 
-        //Compute the angle from which the agent has to rotate in order to aim to the target point
         double deltaX = subTarget.getX() - sourcePos.getX();
         double deltaY = subTarget.getY() - sourcePos.getY();
-        //Direction dir = Direction.fromRadians(Math.atan(deltaY / deltaX));
-        Angle dir = Angle.fromRadians(Math.atan2(deltaY, deltaX));
-        //System.out.println("Dir: " +dir.getDegrees());
-        Angle rotationAngle = dir.getDistance(this.currentMap.getCurrentAngle());
-        if(deltaX > 0) rotationAngle = Angle.fromDegrees(-rotationAngle.getDegrees());
 
-        //System.out.println("Rotation angle: " +rotationAngle.getDegrees());
+        //Angle in the map from the agent to the subtarget
+        double angle = Math.atan2(deltaY, deltaX);
+        if(angle < 0) angle += 2 * Math.PI;
+        Angle targetAngle = Angle.fromRadians(angle);
+
+        //Agent's direction angle in the map
+        Angle agentDirection = this.currentMap.getCurrentAngle();
+
+
+        //Distance angle between subtarget and agent's direction (i.e. angle the agent needs to rotate from to reach the point)
+        Angle rotationAngle = targetAngle.getDistance(agentDirection);
+        if(targetAngle.getDegrees() < agentDirection.getDegrees()) rotationAngle = Angle.fromDegrees(-rotationAngle.getDegrees());
 
 
         //Angle of rotation is very small, move forward
         if (Math.abs(rotationAngle.getDegrees()) < 3) {
-            //System.out.println("Move forward");
             action = new Move(maxDistance);
         }
         //Angle of rotation is bigger than the maximum angle, rotate from the largest angle possible
         else if (rotationAngle.getDegrees() > maxRotationAngle.getDegrees()) {
-            //System.out.println("Rotate from max angle");
             action = new Rotate(maxRotationAngle);
         }
         //Angle of rotation is smaller than -maximum angle, rotate from the smallest angle possible
         else if (rotationAngle.getDegrees() < -maxRotationAngle.getDegrees()) {
-            //System.out.println("Rotate from -max angle");
             action = new Rotate(Angle.fromDegrees(-maxRotationAngle.getDegrees()));
         }
         //Rotate from the rotation angle
         else {
-            //System.out.println("Rotate from dir");
             action = new Rotate(rotationAngle);
         }
 
         counter--;
 
         this.currentMap.updateMap(action, percepts);
-        System.out.println(currentMap);
+        //System.out.println(currentMap);
         return action;
     }
 
@@ -210,7 +210,6 @@ public class TargetFinder implements Intruder {
         Node target = graph.getNode(targetPos);
         if (target != null) {
             path = (LinkedList) finder.aStar(source, target);
-            //System.out.println("Path cost: " +graph.getPathWeight(path));
         }
         else {
             System.out.println("WARNING: Target not found");
