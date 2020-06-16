@@ -25,6 +25,9 @@ public class GridMap {
     private Angle currentAngle;
     private Point targetPosition;
 
+    //Boolean that keeps track whether the move is valid or not, if not it means we need to add a wall to the grid map
+    private boolean isPreviousMoveValid;
+
     private ObjectPerceptType[][] currentMap; //Cell will be null if it hasn't been discovered
 
     public GridMap() {
@@ -48,45 +51,6 @@ public class GridMap {
         //Reset the map if the agent just got teleported
         if(percepts.getAreaPercepts().isJustTeleported()) resetParameters();
 
-        //Update the direction angle
-        if(action instanceof Rotate) {
-            //System.out.println("Current angle: " +currentAngle.getDegrees());
-            currentAngle = Angle.fromDegrees((currentAngle.getDegrees() + ((Rotate) action).getAngle().getDegrees())%360);
-            while(currentAngle.getDegrees() < 0) currentAngle = Angle.fromDegrees(currentAngle.getDegrees() + 360);
-            //System.out.println("New angle: " +currentAngle.getDegrees());
-        }
-
-        //Update the agent's position on the map
-        if(action instanceof Move || action instanceof Sprint) {
-            Distance distance;
-            if (action instanceof Move) distance = ((Move) action).getDistance();
-            else distance = ((Sprint) action).getDistance();
-
-            if(isValidMove(distance.getValue(), (IntruderPercepts) percepts)) {
-
-
-                //Change the sign of y to keep the y-axis pointing downwards
-                Point changeInPosition = new Point(Math.cos(currentAngle.getRadians()) * distance.getValue(), Math.sin(currentAngle.getRadians()) * distance.getValue());
-                Point newPosition = new Point(currentPosition.getX() + changeInPosition.getX(), currentPosition.getY() + changeInPosition.getY());
-
-                currentPosition = newPosition;
-
-                //Increase the size of the current map if the agent is outside
-                if (newPosition.getX() <= 0) extendMapToLeft(shiftLength);
-                else if (newPosition.getX() >= currentMapTopRight.getX()) extendMapToRight(shiftLength);
-
-                if (newPosition.getY() <= 0) extendMapToBottom(shiftLength);
-                else if (newPosition.getY() >= currentMapTopRight.getY()) extendMapToTop(shiftLength);
-
-            }
-
-            else {
-                System.out.println("MOVE NOT VALID");
-            }
-
-
-        }
-
 
         //Add all the points in the range of view of the agent to the map
         for(ObjectPercept objectPercept: percepts.getVision().getObjects().getAll()) {
@@ -96,10 +60,7 @@ public class GridMap {
 
 
             double distanceToObject = new Distance(objectPoint, new Point(0,0)).getValue();
-            //double deltaX = Math.abs(objectPoint.getX());
-            //Angle between object point and agent's direction
-            //Angle objectAngle = Angle.fromRadians(Math.asin(deltaX/distanceToObject));
-            //if(objectPoint.getX() > 0) objectAngle = Angle.fromDegrees(-objectAngle.getDegrees());
+            //Angle with respect to the agent
             Angle objectAngle = Angle.fromRadians(Math.atan2(objectPoint.getY(), objectPoint.getX()) - Math.PI/2);
 
 
@@ -145,6 +106,45 @@ public class GridMap {
 
                 if(currentMap[yInMap][xInMap] == null) currentMap[yInMap][xInMap] = ObjectPerceptType.EmptySpace;
             }
+        }
+
+
+        //Update the direction angle
+        if(action instanceof Rotate) {
+            //System.out.println("Current angle: " +currentAngle.getDegrees());
+            currentAngle = Angle.fromDegrees((currentAngle.getDegrees() + ((Rotate) action).getAngle().getDegrees())%360);
+            while(currentAngle.getDegrees() < 0) currentAngle = Angle.fromDegrees(currentAngle.getDegrees() + 360);
+            //System.out.println("New angle: " +currentAngle.getDegrees());
+        }
+
+        //Update the agent's position on the map
+        if(action instanceof Move || action instanceof Sprint) {
+            Distance distance;
+            if (action instanceof Move) distance = ((Move) action).getDistance();
+            else distance = ((Sprint) action).getDistance();
+
+            if(isValidMove(distance.getValue(), (IntruderPercepts) percepts)) {
+
+
+                //Change the sign of y to keep the y-axis pointing downwards
+                Point changeInPosition = new Point(Math.cos(currentAngle.getRadians()) * distance.getValue(), Math.sin(currentAngle.getRadians()) * distance.getValue());
+                Point newPosition = new Point(currentPosition.getX() + changeInPosition.getX(), currentPosition.getY() + changeInPosition.getY());
+
+                currentPosition = newPosition;
+
+                //Increase the size of the current map if the agent is outside
+                if (newPosition.getX() <= 0) extendMapToLeft(shiftLength);
+                else if (newPosition.getX() >= currentMapTopRight.getX()) extendMapToRight(shiftLength);
+
+                if (newPosition.getY() <= 0) extendMapToBottom(shiftLength);
+                else if (newPosition.getY() >= currentMapTopRight.getY()) extendMapToTop(shiftLength);
+
+            }
+
+            else {
+                System.out.println("MOVE NOT VALID");
+            }
+
 
         }
 

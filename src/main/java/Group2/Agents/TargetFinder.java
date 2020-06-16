@@ -49,16 +49,15 @@ public class TargetFinder implements Intruder {
     @Override
     public IntruderAction getAction(IntruderPercepts percepts) {
         IntruderAction action = null;
-        System.out.println("View Angle in degrees: " + percepts.getTargetDirection().getDegrees());
+        //System.out.println("View Angle in degrees: " + percepts.getTargetDirection().getDegrees());
         Angle maxRotationAngle = percepts.getScenarioIntruderPercepts().getScenarioPercepts().getMaxRotationAngle();
-
 
 
 
         if(goalCoord == null) {
 
             if (selfPoint1 == null && selfPoint2 == null) {
-                System.out.println("Seeking goal location...");
+                //System.out.println("Seeking goal location...");
                 u = percepts.getScenarioIntruderPercepts().getMaxMoveDistanceIntruder();
                 selfPoint1 = this.currentMap.getCurrentPosition();
                 goalInitAngle = percepts.getTargetDirection().getDegrees();
@@ -84,6 +83,7 @@ public class TargetFinder implements Intruder {
                 //take step u
                 action = new Move(u);
                 this.currentMap.updateMap(action, percepts);
+                System.out.println(currentMap);
                 return action;
             }
 
@@ -118,7 +118,7 @@ public class TargetFinder implements Intruder {
                 } else if (toLeft && inFront) {
                     goalCoord = new Point( (-1)*(distOriginToGoal * Math.cos(Math.toRadians(goalInitAngle))), Math.abs((distOriginToGoal * Math.sin(Math.toRadians(goalInitAngle)))) );
                 }
-                System.out.println("Goal coordinates are: " + goalCoord);
+                //System.out.println("Goal coordinates are: " + goalCoord);
                 this.currentMap.setTargetPosition(goalCoord);
                 if(goalCoord.getX() <= 0) this.currentMap.extendMapToLeft(50);
                 if(goalCoord.getY() <= 0) this.currentMap.extendMapToBottom(50);
@@ -131,54 +131,59 @@ public class TargetFinder implements Intruder {
         Distance maxDistance = percepts.getScenarioIntruderPercepts().getMaxMoveDistanceIntruder();
 
 
-        //Recompute the path every 10 turns in case the intruder discovered new obstacles
+        //Recompute the path every 'counter' turns in case the intruder discovered new obstacles
         if (counter == 0) {
             computeAStarPath(sourcePos, targetPos);
-            counter = 5;
+            counter = 2;
         }
 
 
+        //Point of the path that the agent will aiming to
         Point subTarget;
-        int subPathSize = 5;
-        System.out.println(this.path);
+        int subPathSize = 2;
+        //System.out.println(this.path);
 
         //Follow the path by aiming at every subSizePath points
         if (path.size() < subPathSize) subTarget = new Point(targetPos.getX(), targetPos.getY());
         else subTarget = new Point(path.get(subPathSize-1).getPos().getX(), path.get(subPathSize-1).getPos().getY());
 
+        //Compute the angle from which the agent has to rotate in order to aim to the target point
         double deltaX = subTarget.getX() - sourcePos.getX();
         double deltaY = subTarget.getY() - sourcePos.getY();
         //Direction dir = Direction.fromRadians(Math.atan(deltaY / deltaX));
         Angle dir = Angle.fromRadians(Math.atan2(deltaY, deltaX));
-        System.out.println("Dir: " +dir.getDegrees());
-
-
+        //System.out.println("Dir: " +dir.getDegrees());
         Angle rotationAngle = dir.getDistance(this.currentMap.getCurrentAngle());
         if(deltaX > 0) rotationAngle = Angle.fromDegrees(-rotationAngle.getDegrees());
 
-        System.out.println("Rotation angle: " +rotationAngle.getDegrees());
+        //System.out.println("Rotation angle: " +rotationAngle.getDegrees());
 
 
+        //Angle of rotation is very small, move forward
         if (Math.abs(rotationAngle.getDegrees()) < 3) {
-            System.out.println("Move forward");
+            //System.out.println("Move forward");
             action = new Move(maxDistance);
         }
+        //Angle of rotation is bigger than the maximum angle, rotate from the largest angle possible
         else if (rotationAngle.getDegrees() > maxRotationAngle.getDegrees()) {
-            System.out.println("Rotate from max angle");
+            //System.out.println("Rotate from max angle");
             action = new Rotate(maxRotationAngle);
         }
+        //Angle of rotation is smaller than -maximum angle, rotate from the smallest angle possible
         else if (rotationAngle.getDegrees() < -maxRotationAngle.getDegrees()) {
-            System.out.println("Rotate from -max angle");
+            //System.out.println("Rotate from -max angle");
             action = new Rotate(Angle.fromDegrees(-maxRotationAngle.getDegrees()));
         }
+        //Rotate from the rotation angle
         else {
-            System.out.println("Rotate from dir");
+            //System.out.println("Rotate from dir");
             action = new Rotate(rotationAngle);
         }
 
         counter--;
 
         this.currentMap.updateMap(action, percepts);
+        System.out.println(currentMap);
         return action;
     }
 
@@ -203,8 +208,10 @@ public class TargetFinder implements Intruder {
         PathFinding finder = new PathFinding(graph);
         Node source = graph.getNode(sourcePos);
         Node target = graph.getNode(targetPos);
-        if (target != null)
+        if (target != null) {
             path = (LinkedList) finder.aStar(source, target);
+            //System.out.println("Path cost: " +graph.getPathWeight(path));
+        }
         else {
             System.out.println("WARNING: Target not found");
             path = null;

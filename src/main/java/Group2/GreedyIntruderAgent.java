@@ -64,6 +64,7 @@ public class GreedyIntruderAgent implements Intruder{
             //System.out.println("Sprint to avoid guard");
             IntruderAction action = new Sprint(percepts.getScenarioIntruderPercepts().getMaxSprintDistanceIntruder());
             this.currentMap.updateMap(action, percepts);
+            //System.out.println(this.currentMap);
             return action;
         }
 
@@ -79,6 +80,7 @@ public class GreedyIntruderAgent implements Intruder{
             //System.out.println("Rotation of angle: " +rotationAngle.getDegrees());
             IntruderAction action = new Rotate(rotationAngle);
             this.currentMap.updateMap(action, percepts);
+            //System.out.println(this.currentMap);
             return action;
         }
 

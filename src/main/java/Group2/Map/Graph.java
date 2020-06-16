@@ -131,10 +131,10 @@ public class Graph {
         nodes.add(x);
     }
 
-    public double getPathWeight(Node start, Node end, List<Edge> path) {
+    public double getPathWeight(List<Node> path) {
         double value = 0;
-        for(Edge e: path) {
-            value += e.getWeight();
+        for(int i=0; i<path.size()-1; i++) {
+            value += this.getEdge(path.get(i), path.get(i+1)).getWeight();
         }
         return value;
     }

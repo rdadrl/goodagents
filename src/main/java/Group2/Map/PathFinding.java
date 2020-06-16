@@ -147,7 +147,7 @@ public class PathFinding {
 
 
         // Open set is empty but goal was never reached
-        System.out.println("GOAL IS NOT REACHED");
+        System.out.println("GOAL IS NOT REACHABLE");
         return null;
     }
 
