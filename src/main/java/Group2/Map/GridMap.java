@@ -15,6 +15,11 @@ import Interop.Percept.Percepts;
 import Interop.Percept.Vision.ObjectPercept;
 import Interop.Percept.Vision.ObjectPerceptType;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 public class GridMap {
@@ -23,7 +28,7 @@ public class GridMap {
     private Point currentMapTopRight;
     private Angle currentAngle;
     private Point targetPosition;
-
+    public ObjectPerceptType[][] newMap;
     //Boolean that keeps track whether the move is valid or not, if not it means we need to add a wall to the grid map
     private boolean isPreviousMoveValid;
 
@@ -105,18 +110,17 @@ public class GridMap {
                 if(currentMap[yInMap][xInMap] == null) currentMap[yInMap][xInMap] = ObjectPerceptType.EmptySpace;
             }
         }
-
-        ObjectPerceptType[][] newMap = new ObjectPerceptType[currentMap.length][currentMap[0].length];
-        for(int i=0; i<currentMap.length; i++) {
-            for(int j=0; j<currentMap[0].length;j++) {
-                if(currentMap[i][j]==ObjectPerceptType.Wall) {
-                    newMap[i][j] = ObjectPerceptType.Wall;
-                }
-            }
-        }
-
-
-
+        currentMap =  dilate(currentMap);
+//        ObjectPerceptType[][] newMap = new ObjectPerceptType[currentMap.length][currentMap[0].length];
+//        for(int i=0; i<newMap.length; i++) {
+//            for (int j = 0; j < newMap[0].length; j++) {
+//                if (newMap[i][j] == ObjectPerceptType.Wall) {
+//                    newMap[i][j] = ObjectPerceptType.Wall;
+//                    //System.out.println(newMap);
+//
+//                }
+//            }
+//        }
 
         //Update the direction angle
         if(action instanceof Rotate) {
@@ -339,5 +343,25 @@ public class GridMap {
             str += "\n";
         }
         return str;
+    }
+    ObjectPerceptType[][] dilate(ObjectPerceptType[][] image){
+        for (int i=0; i<image.length; i++){
+            for (int j=0; j<image[i].length; j++){
+                if (image[i][j] == ObjectPerceptType.Wall){
+                    if (i>0 && image[i-1][j]== ObjectPerceptType.EmptySpace) {image[i-1][j] = ObjectPerceptType.ShadedArea;}
+                    if (j>0 && image[i][j-1]==  ObjectPerceptType.EmptySpace) image[i][j-1] = ObjectPerceptType.ShadedArea;
+                    if (i+1<image.length && image[i+1][j]==ObjectPerceptType.EmptySpace) image[i+1][j] = ObjectPerceptType.ShadedArea;
+                    if (j+1<image[i].length && image[i][j+1]==ObjectPerceptType.EmptySpace) image[i][j+1] = ObjectPerceptType.ShadedArea;
+                }
+            }
+        }
+        for (int i=0; i<image.length; i++){
+            for (int j=0; j<image[i].length; j++){
+                if (image[i][j] == ObjectPerceptType.ShadedArea){
+                    image[i][j] = ObjectPerceptType.Wall;
+                }
+            }
+        }
+        return image;
     }
 }
