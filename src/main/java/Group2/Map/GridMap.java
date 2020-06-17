@@ -106,6 +106,15 @@ public class GridMap {
             }
         }
 
+        ObjectPerceptType[][] newMap = new ObjectPerceptType[currentMap.length][currentMap[0].length];
+        for(int i=0; i<currentMap.length; i++) {
+            for(int j=0; j<currentMap[0].length;j++) {
+                if(currentMap[i][j]==ObjectPerceptType.Wall) {
+                    newMap[i][j] = ObjectPerceptType.Wall;
+                }
+            }
+        }
+
 
 
 
