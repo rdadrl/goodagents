@@ -49,7 +49,7 @@ public class TargetFinder implements Intruder {
     @Override
     public IntruderAction getAction(IntruderPercepts percepts) {
         IntruderAction action = null;
-        System.out.println("View Angle in degrees: " + percepts.getTargetDirection().getDegrees());
+        //System.out.println("View Angle in degrees: " + percepts.getTargetDirection().getDegrees());
         Angle maxRotationAngle = percepts.getScenarioIntruderPercepts().getScenarioPercepts().getMaxRotationAngle();
 
 
@@ -134,13 +134,13 @@ public class TargetFinder implements Intruder {
         //Recompute the path every 'counter' turns in case the intruder discovered new obstacles
         if (counter == 0) {
             computeAStarPath(sourcePos, targetPos);
-            counter = 2;
+            counter = 5;
         }
 
 
         //Point of the path that the agent will aiming to
         Point subTarget;
-        int subPathSize = 2;
+        int subPathSize = 5;
 
         //Follow the path by aiming at every subSizePath points
         if (path.size() < subPathSize) subTarget = new Point(targetPos.getX(), targetPos.getY());
@@ -159,24 +159,36 @@ public class TargetFinder implements Intruder {
 
 
         //Distance angle between subtarget and agent's direction (i.e. angle the agent needs to rotate from to reach the point)
-        Angle rotationAngle = targetAngle.getDistance(agentDirection);
-        if(targetAngle.getDegrees() < agentDirection.getDegrees()) rotationAngle = Angle.fromDegrees(-rotationAngle.getDegrees());
+        //Angle rotationAngle = targetAngle.getDistance(agentDirection);
+        //if(targetAngle.getDegrees() < agentDirection.getDegrees()) rotationAngle = Angle.fromDegrees(-rotationAngle.getDegrees());
+        //if(deltaX > 0) rotationAngle = Angle.fromDegrees(-rotationAngle.getDegrees());
 
+        Angle rotationAngle = Angle.fromDegrees((targetAngle.getDegrees() - agentDirection.getDegrees())%360);
+        while(rotationAngle.getDegrees() < -180) rotationAngle = Angle.fromDegrees(rotationAngle.getDegrees()+360);
 
+        System.out.println();
+        System.out.println();
+        System.out.println("Agent's direction: " +agentDirection.getDegrees());
+        System.out.println("Target angle: "+targetAngle.getDegrees());
+        System.out.println("Rotation angle: " +rotationAngle.getDegrees());
         //Angle of rotation is very small, move forward
         if (Math.abs(rotationAngle.getDegrees()) < 3) {
+            System.out.println("FORWARD");
             action = new Move(maxDistance);
         }
         //Angle of rotation is bigger than the maximum angle, rotate from the largest angle possible
         else if (rotationAngle.getDegrees() > maxRotationAngle.getDegrees()) {
+            System.out.println("MAX");
             action = new Rotate(maxRotationAngle);
         }
         //Angle of rotation is smaller than -maximum angle, rotate from the smallest angle possible
         else if (rotationAngle.getDegrees() < -maxRotationAngle.getDegrees()) {
+            System.out.println("MIN");
             action = new Rotate(Angle.fromDegrees(-maxRotationAngle.getDegrees()));
         }
         //Rotate from the rotation angle
         else {
+            System.out.println("ANGLE");
             action = new Rotate(rotationAngle);
         }
 

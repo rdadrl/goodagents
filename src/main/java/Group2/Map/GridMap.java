@@ -15,8 +15,7 @@ import Interop.Percept.Percepts;
 import Interop.Percept.Vision.ObjectPercept;
 import Interop.Percept.Vision.ObjectPerceptType;
 
-import java.util.Arrays;
-import java.util.Set;
+import java.util.*;
 
 public class GridMap {
 
@@ -50,6 +49,7 @@ public class GridMap {
 
         //Reset the map if the agent just got teleported
         if(percepts.getAreaPercepts().isJustTeleported()) resetParameters();
+
 
 
         //Add all the points in the range of view of the agent to the map
@@ -90,7 +90,6 @@ public class GridMap {
             if(objectPercept.getType() != ObjectPerceptType.Guard && currentMap[objectYInMap][objectXInMap] == null) {
                 currentMap[objectYInMap][objectXInMap] = objectPercept.getType();
             }
-            //System.out.println("Add in Map at [" + objectXInMap +", " + objectYInMap +"]: " +objectPercept.getType());
 
 
             //Set all points between the object percept point and the agent to empty spaces
@@ -102,11 +101,12 @@ public class GridMap {
 
                 int xInMap = (int) Math.round(currentPosition.getX() + x);
                 int yInMap = (int) Math.round(currentPosition.getY() + y);
-                //System.out.println("Add in Map at [" + xInMap +", " + yInMap +"] EmptySpace");
 
                 if(currentMap[yInMap][xInMap] == null) currentMap[yInMap][xInMap] = ObjectPerceptType.EmptySpace;
             }
         }
+
+
 
 
         //Update the direction angle
@@ -149,77 +149,6 @@ public class GridMap {
         }
 
     }
-
-
-    /**
-     * Method that increases the size of the current map that the agent is keeping track of and updates the agent's position accordingly
-     * @param x = -1 if the map needs to be extended on the left, = 1 if it is on the right
-     * @param y = -1 if the map needs to be extended on the top, = -1 if it is on the bottom
-     * @param newPosition, the position the agent needs to be updated to if it moved (set to current position if the agent isn't moving)
-     */
-    /*
-    public void extendMap(int x, int y, Point newPosition, int shiftLength) {
-        //Variables keeping track of change in size of the map
-
-        //Point is on the left of the current known map, extend the map to that area and shift all the points to the left
-        if(x == -1) {
-            //System.out.println("Extend map to left");
-            ObjectPerceptType[][] newMap = new ObjectPerceptType[currentMap.length][currentMap[0].length +shiftLength];
-            for(int i=0; i<currentMap.length; i++) {
-                for(int j=0; j<currentMap[0].length ;j++) {
-                    newMap[i][j+shiftLength] = currentMap[i][j];
-                }
-            }
-            currentMap = newMap;
-        }
-
-
-        //Point is on the right of the current known map, extend the map to that area
-        if(x == 1) {
-            //System.out.println("Extend map to right");
-            ObjectPerceptType[][] newMap = new ObjectPerceptType[currentMap.length][currentMap[0].length +shiftLength];
-            for(int i=0; i<currentMap.length; i++) {
-                for(int j=0; j<currentMap[0].length ;j++) {
-                    newMap[i][j] = currentMap[i][j];
-                }
-            }
-            currentMap = newMap;
-        }
-
-        //Point is above the current known map, extend the map to that area and shift all points to the top
-        if(y == -1) {
-            //System.out.println("Extend map to top");
-            ObjectPerceptType[][] newMap = new ObjectPerceptType[currentMap.length +shiftLength][currentMap[0].length];
-            for(int i=0; i<currentMap.length; i++) {
-                for(int j=0; j<currentMap[0].length ;j++) {
-                    newMap[i][j] = currentMap[i][j];
-                }
-            }
-            currentMap = newMap;
-        }
-
-        //Point is under the current known map, extend the map to that area
-        if(y == 1) {
-            //System.out.println("Extend map to bottom");
-            ObjectPerceptType[][] newMap = new ObjectPerceptType[currentMap.length +shiftLength][currentMap[0].length];
-            for(int i=0; i<currentMap.length; i++) {
-                for(int j=0; j<currentMap[0].length ;j++) {
-                    newMap[i+shiftLength][j] = currentMap[i][j];
-                }
-            }
-            currentMap = newMap;
-        }
-
-        currentPosition = new Point(newPosition.getX(), newPosition.getY());
-        if(x == -1) {
-            currentPosition = new Point(currentPosition.getX() + shiftLength, currentPosition.getY());
-            currentMapTopLeft = new Point(currentPosition.getX() + shiftLength, currentPosition.getY());
-        }
-        if(y == 1) {
-            currentPosition = new Point(currentPosition.getX(), currentPosition.getY() + shiftLength);
-            currentMapTopLeft = new Point(currentPosition.getX(), currentPosition.getY() + shiftLength);
-        }
-    } */
 
 
     /**
@@ -288,7 +217,7 @@ public class GridMap {
         currentMap = newMap;
         currentPosition = new Point(currentPosition.getX(), currentPosition.getY() + shiftLength);
         currentMapTopRight = new Point(currentPosition.getX(), currentPosition.getY() + shiftLength);
-        targetPosition = new Point(targetPosition.getX(), targetPosition.getY()+ shiftLength);
+        targetPosition = new Point(targetPosition.getX(), targetPosition.getY()+shiftLength);
     }
 
 
@@ -344,9 +273,12 @@ public class GridMap {
 //                        double distanceToObject = new Distance(objectPoint, new Point(0,0)).getValue();
 //                        Angle objectAngle = Angle.fromRadians(Math.atan2(objectPoint.getY(), objectPoint.getX()) - Math.PI/2);
 //                        Angle angleInMap = Angle.fromDegrees(currentAngle.getDegrees() + objectAngle.getDegrees());
-//                        int objectXInMap = (int) Math.round(currentPosition.getX() + Math.cos(angleInMap.getRadians())*distanceToObject);
-//                        int objectYInMap = (int) Math.round(currentPosition.getY() + Math.sin(angleInMap.getRadians())*distanceToObject);
 //
+//                        double xPos = (currentPosition.getX() + Math.cos(angleInMap.getRadians())*distanceToObject);
+//                        double yPos = (currentPosition.getY() + Math.sin(angleInMap.getRadians())*distanceToObject);
+//
+//                        int objectXInMap = (int) Math.round(xPos);
+//                        int objectYInMap = (int) Math.round(yPos);
 //
 //                        this.currentMap[objectYInMap][objectXInMap] = ObjectPerceptType.Wall;
                         return false;
