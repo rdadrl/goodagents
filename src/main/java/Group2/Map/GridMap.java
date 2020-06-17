@@ -110,18 +110,18 @@ public class GridMap {
                 if(currentMap[yInMap][xInMap] == null) currentMap[yInMap][xInMap] = ObjectPerceptType.EmptySpace;
             }
         }
-        currentMap =  dilate(currentMap);
 //        ObjectPerceptType[][] newMap = new ObjectPerceptType[currentMap.length][currentMap[0].length];
 //        for(int i=0; i<newMap.length; i++) {
 //            for (int j = 0; j < newMap[0].length; j++) {
 //                if (newMap[i][j] == ObjectPerceptType.Wall) {
 //                    newMap[i][j] = ObjectPerceptType.Wall;
-//                    //System.out.println(newMap);
 //
 //                }
 //            }
 //        }
-
+        ObjectPerceptType[][] newMap1 =  dilate(currentMap);
+        ObjectPerceptType[][] newMap2 =  erode(newMap1);
+        currentMap = newMap2;
         //Update the direction angle
         if(action instanceof Rotate) {
             //System.out.println("Current angle: " +currentAngle.getDegrees());
@@ -344,24 +344,55 @@ public class GridMap {
         }
         return str;
     }
-    ObjectPerceptType[][] dilate(ObjectPerceptType[][] image){
-        for (int i=0; i<image.length; i++){
-            for (int j=0; j<image[i].length; j++){
-                if (image[i][j] == ObjectPerceptType.Wall){
-                    if (i>0 && image[i-1][j]== ObjectPerceptType.EmptySpace) {image[i-1][j] = ObjectPerceptType.ShadedArea;}
-                    if (j>0 && image[i][j-1]==  ObjectPerceptType.EmptySpace) image[i][j-1] = ObjectPerceptType.ShadedArea;
-                    if (i+1<image.length && image[i+1][j]==ObjectPerceptType.EmptySpace) image[i+1][j] = ObjectPerceptType.ShadedArea;
-                    if (j+1<image[i].length && image[i][j+1]==ObjectPerceptType.EmptySpace) image[i][j+1] = ObjectPerceptType.ShadedArea;
+    public ObjectPerceptType[][] dilate(ObjectPerceptType[][] currentMap){
+        for (int i=0; i<currentMap.length; i++){
+            for (int j=0; j<currentMap[i].length; j++){
+                if (currentMap[i][j] == ObjectPerceptType.Wall){
+                    if (i>0 && currentMap[i-1][j]== ObjectPerceptType.EmptySpace) {currentMap[i-1][j] = ObjectPerceptType.ShadedArea;}
+                    if (j>0 && currentMap[i][j-1]==  ObjectPerceptType.EmptySpace) currentMap[i][j-1] = ObjectPerceptType.ShadedArea;
+                    if (i+1<currentMap.length && currentMap[i+1][j]==ObjectPerceptType.EmptySpace) currentMap[i+1][j] = ObjectPerceptType.ShadedArea;
+                    if (j+1<currentMap[i].length && currentMap[i][j+1]==ObjectPerceptType.EmptySpace) currentMap[i][j+1] = ObjectPerceptType.ShadedArea;
+                    if (j+1<currentMap[i].length && i+1<currentMap.length && currentMap[i+1][j+1]==ObjectPerceptType.EmptySpace) currentMap[i+1][j+1] = ObjectPerceptType.ShadedArea;
+                    if (j>0 && i+1<currentMap.length && currentMap[i+1][j-1]==ObjectPerceptType.EmptySpace) currentMap[i+1][j-1] = ObjectPerceptType.ShadedArea;
+                    if (j+1<currentMap[i].length && i>0 && currentMap[i-1][j+1]==ObjectPerceptType.EmptySpace) currentMap[i-1][j+1] = ObjectPerceptType.ShadedArea;
+                    if (j>0 && i>0 && currentMap[i-1][j-1]==ObjectPerceptType.EmptySpace) currentMap[i-1][j-1] = ObjectPerceptType.ShadedArea;
+
+                }
+
+            }
+        }
+        for (int i=0; i<currentMap.length; i++){
+            for (int j=0; j<currentMap[i].length; j++) {
+                if (currentMap[i][j] == ObjectPerceptType.ShadedArea) {
+                    currentMap[i][j] = ObjectPerceptType.Wall;
                 }
             }
         }
-        for (int i=0; i<image.length; i++){
-            for (int j=0; j<image[i].length; j++){
-                if (image[i][j] == ObjectPerceptType.ShadedArea){
-                    image[i][j] = ObjectPerceptType.Wall;
+        return currentMap;
+    }
+    public ObjectPerceptType[][] erode(ObjectPerceptType[][] currentMap){
+        for (int i=0; i<currentMap.length; i++){
+            for (int j=0; j<currentMap[i].length; j++){
+                if (currentMap[i][j] == ObjectPerceptType.Wall){
+                    if (i>0 && currentMap[i-1][j]== ObjectPerceptType.Wall) currentMap[i-1][j] = ObjectPerceptType.ShadedArea;
+                    if (j>0 && currentMap[i][j-1]==  ObjectPerceptType.Wall) currentMap[i][j-1] = ObjectPerceptType.ShadedArea;
+                    if (i+1<currentMap.length && currentMap[i+1][j]==ObjectPerceptType.Wall) currentMap[i+1][j] = ObjectPerceptType.ShadedArea;
+                    if (j+1<currentMap[i].length && currentMap[i][j+1]==ObjectPerceptType.Wall) currentMap[i][j+1] = ObjectPerceptType.ShadedArea;
+                    if (j+1<currentMap[i].length && i+1<currentMap.length && currentMap[i+1][j+1]==ObjectPerceptType.Wall) currentMap[i+1][j+1] = ObjectPerceptType.ShadedArea;
+                    if (j>0 && i+1<currentMap.length && currentMap[i+1][j-1]==ObjectPerceptType.Wall) currentMap[i+1][j-1] = ObjectPerceptType.ShadedArea;
+                    if (j+1<currentMap[i].length && i>0 && currentMap[i-1][j+1]==ObjectPerceptType.Wall) currentMap[i-1][j+1] = ObjectPerceptType.ShadedArea;
+                    if (j>0 && i>0 && currentMap[i-1][j-1]==ObjectPerceptType.Wall) currentMap[i-1][j-1] = ObjectPerceptType.ShadedArea;
+
                 }
             }
         }
-        return image;
+        for (int i=0; i<currentMap.length; i++){
+            for (int j=0; j<currentMap[i].length; j++){
+                if (currentMap[i][j] == ObjectPerceptType.ShadedArea){
+                    currentMap[i][j] = ObjectPerceptType.EmptySpace;
+                }
+            }
+        }
+        return currentMap;
     }
 }
