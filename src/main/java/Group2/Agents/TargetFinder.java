@@ -195,7 +195,8 @@ public class TargetFinder implements Intruder {
         counter--;
 
         this.currentMap.updateMap(action, percepts);
-        System.out.println(currentMap);
+
+//        System.out.println(currentMap);
         return action;
     }
 
