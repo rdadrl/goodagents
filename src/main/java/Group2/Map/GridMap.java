@@ -12,6 +12,8 @@ import Interop.Geometry.Distance;
 import Interop.Geometry.Point;
 import Interop.Percept.IntruderPercepts;
 import Interop.Percept.Percepts;
+import Interop.Percept.Smell.SmellPercept;
+import Interop.Percept.Smell.SmellPerceptType;
 import Interop.Percept.Vision.ObjectPercept;
 import Interop.Percept.Vision.ObjectPerceptType;
 
@@ -29,8 +31,7 @@ public class GridMap {
     private Angle currentAngle;
     private Point targetPosition;
     public ObjectPerceptType[][] newMap;
-    //Boolean that keeps track whether the move is valid or not, if not it means we need to add a wall to the grid map
-    private boolean isPreviousMoveValid;
+    private ArrayList<Point> guardPositions;
 
     private ObjectPerceptType[][] currentMap; //Cell will be null if it hasn't been discovered
 
@@ -130,6 +131,24 @@ public class GridMap {
         //  ObjectPerceptType[][] newMap2 =  erode(newMap1);
         currentMap = newMap1;
 
+
+
+//        //Pheromone dropped by another intruder to warn that there is a guard there
+//        for(SmellPercept smell: percepts.getSmells().getAll()) {
+//            if(smell.getType().equals(SmellPerceptType.Pheromone1)) this.guardPositions.add(smell.)
+//        }
+
+
+
+//        System.out.println("----------------------------------------NORMAL MAP----------------------------------------");
+//        System.out.println(printMap(currentMap));
+//        ObjectPerceptType[][] newMap1 =  dilate(currentMap);
+//        System.out.println("----------------------------------------AFTER DILATE----------------------------------------");
+//        System.out.println(printMap(newMap1));
+//        ObjectPerceptType[][] newMap2 =  erode(newMap1);
+//        System.out.println("----------------------------------------AFTER ERODE----------------------------------------");
+//        System.out.println(printMap(newMap2));
+        //currentMap = newMap2;
         //Update the direction angle
         if(action instanceof Rotate) {
             //System.out.println("Current angle: " +currentAngle.getDegrees());
@@ -353,6 +372,51 @@ public class GridMap {
         }
         return str;
     }
+
+    public String printMap(ObjectPerceptType[][] map) {
+        String str = "";
+        for (int i = 0; i < map.length; i++) {
+            for (int j = 0; j < map[0].length; j++) {
+                if (map[i][j] == null) str += " ";
+                else {
+                    switch (map[i][j]) {
+                        case EmptySpace:
+                            str += ".";
+                            break;
+                        case ShadedArea:
+                            str += "s";
+                            break;
+                        case Door:
+                            str += "d";
+                            break;
+                        case Wall:
+                            str += "w";
+                            break;
+                        case Window:
+                            str += "i";
+                            break;
+                        case SentryTower:
+                            str += "t";
+                            break;
+                        case TargetArea:
+                            str += "T";
+                            break;
+                        case Teleport:
+                            str += "t";
+                            break;
+                        default:
+                            str += " ";
+                            break;
+                    }
+                }
+            }
+            str += "\n";
+        }
+        return str;
+    }
+
+
+
     boolean delete = false;
     public ObjectPerceptType[][] dilate(ObjectPerceptType[][] currentMap){
         for (int i=0; i<currentMap.length; i++){
