@@ -31,7 +31,7 @@ public class GridMap {
     private Angle currentAngle;
     private Point targetPosition;
     public ObjectPerceptType[][] newMap;
-    private ArrayList<Point> guardPositions;
+
 
     private ObjectPerceptType[][] currentMap; //Cell will be null if it hasn't been discovered
 
@@ -127,28 +127,23 @@ public class GridMap {
 //                if (j>0 && i>0 && currentMap[i-1][j-1]==ObjectPerceptType.EmptySpace) aMap[i-1][j-1] = ObjectPerceptType.EmptySpace;else break;
 //            }
 //        }
+
+
+
+        //System.out.println("----------------------------------------NORMAL MAP----------------------------------------");
+        System.out.println(printMap(currentMap));
+
+
         ObjectPerceptType[][] newMap1 =  dilate(currentMap);
         //  ObjectPerceptType[][] newMap2 =  erode(newMap1);
-        currentMap = newMap1;
+        //System.out.println("----------------------------------------DILATED MAP----------------------------------------");
+        //System.out.println(printMap(newMap1));
+        //currentMap = newMap1;
 
 
 
-//        //Pheromone dropped by another intruder to warn that there is a guard there
-//        for(SmellPercept smell: percepts.getSmells().getAll()) {
-//            if(smell.getType().equals(SmellPerceptType.Pheromone1)) this.guardPositions.add(smell.)
-//        }
 
 
-
-//        System.out.println("----------------------------------------NORMAL MAP----------------------------------------");
-//        System.out.println(printMap(currentMap));
-//        ObjectPerceptType[][] newMap1 =  dilate(currentMap);
-//        System.out.println("----------------------------------------AFTER DILATE----------------------------------------");
-//        System.out.println(printMap(newMap1));
-//        ObjectPerceptType[][] newMap2 =  erode(newMap1);
-//        System.out.println("----------------------------------------AFTER ERODE----------------------------------------");
-//        System.out.println(printMap(newMap2));
-        //currentMap = newMap2;
         //Update the direction angle
         if(action instanceof Rotate) {
             //System.out.println("Current angle: " +currentAngle.getDegrees());
@@ -163,31 +158,28 @@ public class GridMap {
             if (action instanceof Move) distance = ((Move) action).getDistance();
             else distance = ((Sprint) action).getDistance();
 
-            if(isValidMove(distance.getValue(), (IntruderPercepts) percepts)) {
+            double distToWall = distanceToWall(distance.getValue(), (IntruderPercepts) percepts);
 
-
-                //Change the sign of y to keep the y-axis pointing downwards
-                Point changeInPosition = new Point(Math.cos(currentAngle.getRadians()) * distance.getValue(), Math.sin(currentAngle.getRadians()) * distance.getValue());
-                Point newPosition = new Point(currentPosition.getX() + changeInPosition.getX(), currentPosition.getY() + changeInPosition.getY());
-
-                currentPosition = newPosition;
-
-                //Increase the size of the current map if the agent is outside
-                if (newPosition.getX() <= 0) extendMapToLeft(shiftLength);
-                else if (newPosition.getX() >= currentMapTopRight.getX()) extendMapToRight(shiftLength);
-
-                if (newPosition.getY() <= 0) extendMapToBottom(shiftLength);
-                else if (newPosition.getY() >= currentMapTopRight.getY()) extendMapToTop(shiftLength);
-
+            //The agent can only move from the distance between him and the wall
+            if(distToWall < Double.MAX_VALUE) {
+                if(distToWall > 0.5) distance = new Distance(distToWall);
+                else distance = new Distance(0);
             }
 
-            else {
-                System.out.println("MOVE NOT VALID");
-            }
+            //Change the sign of y to keep the y-axis pointing downwards
+            Point changeInPosition = new Point(Math.cos(currentAngle.getRadians()) * distance.getValue(), Math.sin(currentAngle.getRadians()) * distance.getValue());
+            Point newPosition = new Point(currentPosition.getX() + changeInPosition.getX(), currentPosition.getY() + changeInPosition.getY());
 
+            currentPosition = newPosition;
+
+            //Increase the size of the current map if the agent is outside
+            if (newPosition.getX() <= 0) extendMapToLeft(shiftLength);
+            else if (newPosition.getX() >= currentMapTopRight.getX()) extendMapToRight(shiftLength);
+
+            if (newPosition.getY() <= 0) extendMapToBottom(shiftLength);
+            else if (newPosition.getY() >= currentMapTopRight.getY()) extendMapToTop(shiftLength);
 
         }
-
 
     }
 
@@ -300,34 +292,18 @@ public class GridMap {
     }
 
     //Collision checker
-    public boolean isValidMove(double distance, IntruderPercepts percepts) {
+    public double distanceToWall(double moveDistance, IntruderPercepts percepts) {
+        double minDist = Double.MAX_VALUE;
         for(ObjectPercept objectPercept: percepts.getVision().getObjects().getAll()) {
-            if(Math.abs(objectPercept.getPoint().getX()) <= 0.1) {
                 if(objectPercept.getType().isSolid()) {
-                    if(objectPercept.getPoint().getDistance(new Point(0,0)).getValue() >= distance) {
-
-//                        //Object point in the agent's cartesian system (agent is at (0,0))
-//                        //Set the point right in front of the agent to a Wall
-//                        Point objectPoint = new Point(objectPercept.getPoint().getX(), objectPercept.getPoint().getY());
-//
-//                         //Get that point in the internal map representation
-//                        double distanceToObject = new Distance(objectPoint, new Point(0,0)).getValue();
-//                        Angle objectAngle = Angle.fromRadians(Math.atan2(objectPoint.getY(), objectPoint.getX()) - Math.PI/2);
-//                        Angle angleInMap = Angle.fromDegrees(currentAngle.getDegrees() + objectAngle.getDegrees());
-//
-//                        double xPos = (currentPosition.getX() + Math.cos(angleInMap.getRadians())*distanceToObject);
-//                        double yPos = (currentPosition.getY() + Math.sin(angleInMap.getRadians())*distanceToObject);
-//
-//                        int objectXInMap = (int) Math.round(xPos);
-//                        int objectYInMap = (int) Math.round(yPos);
-//
-//                        this.currentMap[objectYInMap][objectXInMap] = ObjectPerceptType.Wall;
-                        return false;
+                    //Distance from agent to wall minus agent's radius
+                    double dist = objectPercept.getPoint().getDistance(new Point(0,0)).getValue() -0.5;
+                    if(dist <= moveDistance && dist < minDist) {
+                        minDist = dist;
                     }
                 }
-            }
         }
-        return true;
+        return minDist;
     }
 
     @Override
