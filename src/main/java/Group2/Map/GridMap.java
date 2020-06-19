@@ -131,7 +131,7 @@ public class GridMap {
 
 
         //System.out.println("----------------------------------------NORMAL MAP----------------------------------------");
-        System.out.println(printMap(currentMap));
+       // System.out.println(printMap(currentMap));
 
 
         ObjectPerceptType[][] newMap1 =  dilate(currentMap);

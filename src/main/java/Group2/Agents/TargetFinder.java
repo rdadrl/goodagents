@@ -48,9 +48,10 @@ public class TargetFinder implements Intruder {
     private boolean inBack = false;
     private int counter;
 
-
+    int in=1;
     @Override
     public IntruderAction getAction(IntruderPercepts percepts) {
+        in++;
         IntruderAction action = null;
         //System.out.println("View Angle in degrees: " + percepts.getTargetDirection().getDegrees());
         Angle maxRotationAngle = percepts.getScenarioIntruderPercepts().getScenarioPercepts().getMaxRotationAngle();
@@ -201,6 +202,8 @@ public class TargetFinder implements Intruder {
         this.currentMap.updateMap(action, percepts);
 
         //System.out.println(currentMap);
+        System.out.println("number of INTRUDER actions"+" "+ in);
+
         return action;
     }
 

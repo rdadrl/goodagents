@@ -283,6 +283,7 @@ public class Game implements Runnable {
 
             }
         }
+        System.out.println("winner is"+ " "+ winner);
     }
 
     /**
@@ -335,6 +336,7 @@ public class Game implements Runnable {
                 lockin(() -> {
                     final IntruderAction action = intruder.getAgent().getAction(this.generateIntruderPercepts(intruder));
                     actionSuccess.put(intruder, executeAction(intruder, action));
+
                 });
 
                 if((winner = checkForWinner()) != null)
@@ -350,6 +352,7 @@ public class Game implements Runnable {
             lockin(() -> {
                 final GuardAction action = guard.getAgent().getAction(this.generateGuardPercepts(guard));
                 actionSuccess.put(guard, executeAction(guard, action));
+
             });
 
             if((winner = checkForWinner()) != null)
@@ -357,7 +360,7 @@ public class Game implements Runnable {
                 return winner;
             }
         }
-
+       // System.out.println("gugug"+ " "+ g);
         return null;
     }
 

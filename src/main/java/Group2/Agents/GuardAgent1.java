@@ -68,9 +68,10 @@ public class GuardAgent1 implements Guard {
         System.out.println("Made Guard "+ID);
     }
 
-
+    int g = 1;
     @Override
     public GuardAction getAction(GuardPercepts guardPercepts) {
+        g++;
         GuardAction plannedAction = null;
         Set<ObjectPercept> inView = guardPercepts.getVision().getObjects().getAll();
         Set<SoundPercept> inHearingRange = guardPercepts.getSounds().getAll();
@@ -342,6 +343,7 @@ public class GuardAgent1 implements Guard {
         }
 
         counter++;
+        System.out.println("number of GUARD actions " +" "+ g);
         //map.updateMap(plannedAction,guardPercepts);
         return plannedAction;
         }
