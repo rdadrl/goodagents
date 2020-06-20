@@ -111,36 +111,6 @@ public class GridMap {
                 if(currentMap[yInMap][xInMap] == null) currentMap[yInMap][xInMap] = ObjectPerceptType.EmptySpace;
             }
         }
-//        ObjectPerceptType[][] aMap = new ObjectPerceptType[currentMap.length][currentMap[0].length];
-//        for(int i=0; i<aMap.length; i++) {
-//            for (int j = 0; j < aMap[0].length; j++) {
-//                if (currentMap[i][j] == ObjectPerceptType.Wall) {
-//                    aMap[i][j] = ObjectPerceptType.Wall;
-//                }
-//                 if (i>0 && currentMap[i-1][j]== ObjectPerceptType.EmptySpace) {aMap[i-1][j] = ObjectPerceptType.EmptySpace;}else break;
-//                if (j>0 && currentMap[i][j-1]==  ObjectPerceptType.EmptySpace) aMap[i][j-1] = ObjectPerceptType.EmptySpace;else break;
-//                if (i+1<currentMap.length && currentMap[i+1][j]==ObjectPerceptType.EmptySpace) aMap[i+1][j] = ObjectPerceptType.EmptySpace;else break;
-//                if (j+1<currentMap[i].length && currentMap[i][j+1]==ObjectPerceptType.EmptySpace) aMap[i][j+1] = ObjectPerceptType.EmptySpace;else break;
-//                if (j+1<currentMap[i].length && i+1<currentMap.length && currentMap[i+1][j+1]==ObjectPerceptType.EmptySpace) aMap[i+1][j+1] = ObjectPerceptType.EmptySpace;else break;
-//                if (j>0 && i+1<currentMap.length && currentMap[i+1][j-1]==ObjectPerceptType.EmptySpace) aMap[i+1][j-1] = ObjectPerceptType.EmptySpace;else break;
-//                if (j+1<currentMap[i].length && i>0 && currentMap[i-1][j+1]==ObjectPerceptType.EmptySpace) aMap[i-1][j+1] = ObjectPerceptType.EmptySpace;else break;
-//                if (j>0 && i>0 && currentMap[i-1][j-1]==ObjectPerceptType.EmptySpace) aMap[i-1][j-1] = ObjectPerceptType.EmptySpace;else break;
-//            }
-//        }
-
-
-
-        //System.out.println("----------------------------------------NORMAL MAP----------------------------------------");
-       // System.out.println(printMap(currentMap));
-
-
-        ObjectPerceptType[][] newMap1 =  dilate(currentMap);
-        //  ObjectPerceptType[][] newMap2 =  erode(newMap1);
-        //System.out.println("----------------------------------------DILATED MAP----------------------------------------");
-        //System.out.println(printMap(newMap1));
-        //currentMap = newMap1;
-
-
 
 
 
