@@ -26,11 +26,10 @@ public class GreedyIntruderAgent implements Intruder{
         this.ID = ID;
         this.currentMap = new GridMap();
     }
-
+    public int in=1;
     @Override
     public IntruderAction getAction(IntruderPercepts percepts) {
-
-
+        in++;
         //Stop the intruder if it reaches the target area
         if(reachesTargetArea) return new NoAction();
 
@@ -89,9 +88,14 @@ public class GreedyIntruderAgent implements Intruder{
         rotateFlag = 0;
         IntruderAction action = new Move(percepts.getScenarioIntruderPercepts().getMaxMoveDistanceIntruder());
         this.currentMap.updateMap(action, percepts);
-        System.out.println(this.currentMap);
+       // System.out.println(this.currentMap);
+        System.out.println("number of INTRUDERgreed actions"+" "+ in);
+
         return action;
     }
+
+
+
 
     /**
      * Gradient descent algorithm giving the locally most optimal angle of rotation

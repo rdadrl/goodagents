@@ -248,12 +248,14 @@ public class Game implements Runnable {
     /**
      * Runs the game controller in a loop.
      */
+    int counter = 1;
     @Override
     public void run()
     {
         runningLoop.set(true);
         while (this.winner == null && runningLoop.get())
         {
+            counter++;
             // --- at 0 ticks pause, if -1 we want to go as fas as possible
             if(ticks.get() == 0 ){
                 continue;
@@ -283,7 +285,10 @@ public class Game implements Runnable {
 
             }
         }
-        System.out.println("winner is"+ " "+ winner);
+     System.out.println("Actions performed "+ " "+ counter);
+    }
+    public int getCounter(){
+        return counter;
     }
 
     /**
