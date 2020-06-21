@@ -1,5 +1,6 @@
 package Group2.Map;
 
+import Group9.Main;
 import Group9.math.Vector2;
 import Group9.tree.PointContainer;
 import Interop.Action.Action;
@@ -31,7 +32,7 @@ public class GridMap {
     private Angle currentAngle;
     private Point targetPosition;
     public ObjectPerceptType[][] newMap;
-
+    private static final boolean SUPPRESS_OUTPUT = Main.SUPPRESS_OUTPUT;
 
     private ObjectPerceptType[][] currentMap; //Cell will be null if it hasn't been discovered
 
@@ -160,6 +161,7 @@ public class GridMap {
      */
     public void extendMapToLeft(int shiftLength) {
         //Point is on the left of the current known map, extend the map to that area and shift all the points to the left
+        if(!SUPPRESS_OUTPUT)
         System.out.println("Extend map to left");
         ObjectPerceptType[][] newMap = new ObjectPerceptType[currentMap.length][currentMap[0].length + shiftLength];
         for (int i = 0; i < currentMap.length; i++) {
@@ -178,7 +180,7 @@ public class GridMap {
      * @param shiftLength, the size from which the map is extended
      */
     public void extendMapToRight(int shiftLength) {
-        System.out.println("Extend map to right");
+        if(!SUPPRESS_OUTPUT) System.out.println("Extend map to right");
         ObjectPerceptType[][] newMap = new ObjectPerceptType[currentMap.length][currentMap[0].length +shiftLength];
         for(int i=0; i<currentMap.length; i++) {
             for(int j=0; j<currentMap[0].length ;j++) {
@@ -194,7 +196,7 @@ public class GridMap {
      * @param shiftLength, the size from which the map is extended
      */
     public void extendMapToTop(int shiftLength) {
-        System.out.println("Extend map to top");
+        if(!SUPPRESS_OUTPUT) System.out.println("Extend map to top");
         ObjectPerceptType[][] newMap = new ObjectPerceptType[currentMap.length +shiftLength][currentMap[0].length];
         for(int i=0; i<currentMap.length; i++) {
             for(int j=0; j<currentMap[0].length ;j++) {
@@ -210,7 +212,7 @@ public class GridMap {
      * @param shiftLength, the size from which the map is extended
      */
     public void extendMapToBottom(int shiftLength) {
-        System.out.println("Extend map to bottom");
+        if(!SUPPRESS_OUTPUT) System.out.println("Extend map to bottom");
         ObjectPerceptType[][] newMap = new ObjectPerceptType[currentMap.length +shiftLength][currentMap[0].length];
         for(int i=0; i<currentMap.length; i++) {
             for(int j=0; j<currentMap[0].length ;j++) {

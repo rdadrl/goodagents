@@ -1,6 +1,7 @@
 package Group2;
 
 import Group2.Map.GridMap;
+import Group9.Main;
 import Interop.Agent.Intruder;
 import Interop.Action.*;
 import Interop.Geometry.*;
@@ -18,6 +19,7 @@ public class GreedyIntruderAgent implements Intruder{
     private int moveForward = 0;
     private boolean reachesTargetArea;
     private boolean avoidingGuard;
+    private boolean SUPPRESS_OUTPUT = Main.SUPPRESS_OUTPUT;
 
     private GridMap currentMap;
 
@@ -25,6 +27,7 @@ public class GreedyIntruderAgent implements Intruder{
     public GreedyIntruderAgent(int ID){
         this.ID = ID;
         this.currentMap = new GridMap();
+        System.out.println("Made Intruder "+ID);
     }
     public int in=1;
     @Override
@@ -89,7 +92,7 @@ public class GreedyIntruderAgent implements Intruder{
         IntruderAction action = new Move(percepts.getScenarioIntruderPercepts().getMaxMoveDistanceIntruder());
         this.currentMap.updateMap(action, percepts);
        // System.out.println(this.currentMap);
-        System.out.println("number of INTRUDERgreed actions"+" "+ in);
+        if(!SUPPRESS_OUTPUT) System.out.println("number of INTRUDERgreed actions"+" "+ in);
 
         return action;
     }

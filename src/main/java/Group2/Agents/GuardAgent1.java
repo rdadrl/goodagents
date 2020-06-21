@@ -1,6 +1,7 @@
 package Group2.Agents;
 
 import Group2.Map.GridMap;
+import Group9.Main;
 import Group9.map.objects.Wall;
 import Interop.Action.*;
 import Interop.Agent.Guard;
@@ -45,6 +46,7 @@ public class GuardAgent1 implements Guard {
     int turnsMissing = 0; //Turns since guard lost track of the intruder
     int giveUp = 50; //Turns until the guard gives up after losing track
     int chaseCounter = 0;
+    boolean SUPPRESS_OUTPUT = Main.SUPPRESS_OUTPUT;
 
     //Yelling stuff
     Direction yellDirection;
@@ -343,7 +345,7 @@ public class GuardAgent1 implements Guard {
         }
 
         counter++;
-        System.out.println("number of GUARD actions " +" "+ g);
+        if(!SUPPRESS_OUTPUT) System.out.println("number of GUARD actions " +" "+ g);
         //map.updateMap(plannedAction,guardPercepts);
         return plannedAction;
         }

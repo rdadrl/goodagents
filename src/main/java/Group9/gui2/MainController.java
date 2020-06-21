@@ -6,6 +6,7 @@ import Group9.Game;
 import Group9.agent.container.GuardContainer;
 import Group9.agent.container.IntruderContainer;
 import Group9.agent.factories.DefaultAgentFactory;
+import Group9.agent.factories.OurAgentFactory;
 import Group9.map.dynamic.DynamicObject;
 import Group9.map.parser.Parser;
 import javafx.animation.AnimationTimer;
@@ -33,25 +34,21 @@ public class MainController implements Runnable {
     public MainController(Gui gui, File mapFile,boolean generateHistory){
         this.gui = gui;
         this.generateHistory = generateHistory;
-        game = new Game(Parser.parseFile(mapFile.getAbsolutePath()), new AgentsFactory(), false, 15, new Callback<Game>() {
-            @Override
-            public void call(Game game) {
-                if(generateHistory){
-                    synchronized (history)
-                    {
-                        historyIndex++;
-                        History entry = new History();
-                        history.add(historyIndex, entry);
+        game = new Game(Parser.parseFile(mapFile.getAbsolutePath()), new OurAgentFactory(), false, 15, game -> {
+            if (generateHistory) {
+                synchronized (history) {
+                    historyIndex++;
+                    History entry = new History();
+                    history.add(historyIndex, entry);
 
-                        entry.guardContainers = game.getGuards().stream().map(e -> e.clone(game)).collect(Collectors.toList());
-                        entry.intruderContainers = game.getIntruders().stream().map(e -> e.clone(game)).collect(Collectors.toList());
+                    entry.guardContainers = game.getGuards().stream().map(e -> e.clone(game)).collect(Collectors.toList());
+                    entry.intruderContainers = game.getIntruders().stream().map(e -> e.clone(game)).collect(Collectors.toList());
 
 
-                        entry.dynamicObjects = game.getGameMap().getDynamicObjects().stream()
-                                .map(DynamicObject::clone)
-                                .collect(Collectors.toList());
+                    entry.dynamicObjects = game.getGameMap().getDynamicObjects().stream()
+                            .map(DynamicObject::clone)
+                            .collect(Collectors.toList());
 
-                    }
                 }
             }
         });

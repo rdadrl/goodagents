@@ -5,6 +5,7 @@ import Group9.agent.container.GuardContainer;
 import Group9.agent.container.IntruderContainer;
 import Group9.agent.factories.DefaultAgentFactory;
 import Group9.agent.factories.IAgentFactory;
+import Group9.agent.factories.OurAgentFactory;
 import Group9.map.GameMap;
 import Group9.map.GameSettings;
 import Group9.map.ViewRange;
@@ -52,6 +53,7 @@ public class Game implements Runnable {
         _RANDOM = new Random(_RANDOM_SEED);
     }
 
+    private long startTime = System.nanoTime();
     private GameMap gameMap;
     private ScenarioPercepts scenarioPercepts;
     private GameSettings settings;
@@ -75,7 +77,7 @@ public class Game implements Runnable {
 
     public Game(GameMap gameMap, final boolean queryIntent)
     {
-        this(gameMap, new DefaultAgentFactory(), queryIntent, -1, null);
+        this(gameMap, new OurAgentFactory(), queryIntent, -1, null);
     }
 
     public Game(GameMap gameMap, IAgentFactory agentFactory, final boolean queryIntent)
@@ -299,6 +301,10 @@ public class Game implements Runnable {
     {
         final long intrudersCaptured = intruders.stream().filter(IntruderContainer::isCaptured).count();
         final long intrudersWins = intruders.stream().filter(e -> e.getZoneCounter() >= settings.getTurnsInTargetAreaToWin()).count();
+
+        if((System.nanoTime()-startTime)/1000000000>10) {
+            return Team.TIMEOUT;
+        }
 
         if(intrudersWins > 0)
         {
@@ -709,7 +715,8 @@ public class Game implements Runnable {
     public enum Team
     {
         INTRUDERS,
-        GUARDS
+        GUARDS,
+        TIMEOUT
     }
 
     public interface QueryUpdate
