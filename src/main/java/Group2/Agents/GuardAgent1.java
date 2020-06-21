@@ -40,10 +40,10 @@ public class GuardAgent1 implements Guard {
     //Chase stuff
     boolean chaseMode = false;
     ObjectPercept intruder;
-    double chaseAngleOffset = 8; //If angle between looking and intruder is less than this, then walk straight. Else allign with where intruder is
+    double chaseAngleOffset = 30; //If angle between looking and intruder is less than this, then walk straight. Else allign with where intruder is
     boolean found = false; //Check if an intruder was spotted in FoV
     int turnsMissing = 0; //Turns since guard lost track of the intruder
-    int giveUp = 8; //Turns until the guard gives up after losing track
+    int giveUp = 50; //Turns until the guard gives up after losing track
     int chaseCounter = 0;
 
     //Yelling stuff
@@ -68,9 +68,10 @@ public class GuardAgent1 implements Guard {
         System.out.println("Made Guard "+ID);
     }
 
-
+    int g = 1;
     @Override
     public GuardAction getAction(GuardPercepts guardPercepts) {
+        g++;
         GuardAction plannedAction = null;
         Set<ObjectPercept> inView = guardPercepts.getVision().getObjects().getAll();
         Set<SoundPercept> inHearingRange = guardPercepts.getSounds().getAll();
@@ -83,14 +84,14 @@ public class GuardAgent1 implements Guard {
                 found = true;
                 intruder = object;
                 turnsMissing = 0;
-
+                patrolMode = false;
+                yellInvestigateMode = false;
+                investigationTurns = 0;
+                rotationLeft = 0;
+                chaseMode = true;
 
                 if(chaseCounter==0) {
                     System.out.println(ID+" Intruder spotted");
-                    chaseMode = true;
-                    yellInvestigateMode = false;
-                    investigationTurns = 0;
-                    patrolMode = false;
                     moveCounter = 0;
                     chaseCounter++;
                 }
@@ -175,6 +176,16 @@ public class GuardAgent1 implements Guard {
             double intruderDirection = intruder.getPoint().getClockDirection().getDegrees();
             double intruderDistance = intruder.getPoint().getDistanceFromOrigin().getValue();
 
+            if(turnsMissing>0){
+                for(SoundPercept sound:inHearingRange){
+                    if (sound.getType()==SoundPerceptType.Noise){
+                        intruderDirection = sound.getDirection().getDegrees();
+                        intruderDistance = guardPercepts.getScenarioGuardPercepts().getMaxMoveDistanceGuard().getValue();
+                        break;
+                    }
+                }
+            }
+
             //Check if the angle is close enough to engage, or if some rotation is required
             if(intruderDirection<chaseAngleOffset || 360-intruderDirection<chaseAngleOffset){
                 //Check how close the intruder is. Either run as close as possible or run the distance between the agents
@@ -188,14 +199,12 @@ public class GuardAgent1 implements Guard {
                     if(intruderDirection<180) {
                         plannedAction = new Rotate(Angle.fromDegrees(intruderDirection));
                     }else{
-                        System.out.println("Negative rotation");
                         plannedAction = new Rotate(Angle.fromDegrees(-1*(360-intruderDirection)));
                     }
                 }else{
                     if(intruderDirection<180) {
                         plannedAction = new Rotate(Angle.fromDegrees(maxRotation));
                     }else{
-                        System.out.println("Negative rotation");
                         plannedAction = new Rotate(Angle.fromDegrees(-1*maxRotation));
                     }
                 }
@@ -226,9 +235,9 @@ public class GuardAgent1 implements Guard {
                     if (closest.getType().equals(ObjectPerceptType.Wall)) {
 
                         double rotation = random.nextDouble()*maxRotation;
-                        if(random.nextDouble()<0.5){
-                            rotation = rotation*-1;
-                        }
+//                        if(random.nextDouble()<0.5){
+//                            rotation = rotation*-1;
+//                        }
 
                         plannedAction = new Rotate(Angle.fromDegrees(rotation));
                         if (patrolFound == true) {
@@ -334,6 +343,7 @@ public class GuardAgent1 implements Guard {
         }
 
         counter++;
+        System.out.println("number of GUARD actions " +" "+ g);
         //map.updateMap(plannedAction,guardPercepts);
         return plannedAction;
         }

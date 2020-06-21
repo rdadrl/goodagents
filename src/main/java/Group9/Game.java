@@ -248,12 +248,14 @@ public class Game implements Runnable {
     /**
      * Runs the game controller in a loop.
      */
+    int counter = 1;
     @Override
     public void run()
     {
         runningLoop.set(true);
         while (this.winner == null && runningLoop.get())
         {
+            counter++;
             // --- at 0 ticks pause, if -1 we want to go as fas as possible
             if(ticks.get() == 0 ){
                 continue;
@@ -283,6 +285,10 @@ public class Game implements Runnable {
 
             }
         }
+     System.out.println("Actions performed "+ " "+ counter);
+    }
+    public int getCounter(){
+        return counter;
     }
 
     /**
@@ -335,6 +341,7 @@ public class Game implements Runnable {
                 lockin(() -> {
                     final IntruderAction action = intruder.getAgent().getAction(this.generateIntruderPercepts(intruder));
                     actionSuccess.put(intruder, executeAction(intruder, action));
+
                 });
 
                 if((winner = checkForWinner()) != null)
@@ -350,6 +357,7 @@ public class Game implements Runnable {
             lockin(() -> {
                 final GuardAction action = guard.getAgent().getAction(this.generateGuardPercepts(guard));
                 actionSuccess.put(guard, executeAction(guard, action));
+
             });
 
             if((winner = checkForWinner()) != null)
@@ -357,7 +365,7 @@ public class Game implements Runnable {
                 return winner;
             }
         }
-
+       // System.out.println("gugug"+ " "+ g);
         return null;
     }
 

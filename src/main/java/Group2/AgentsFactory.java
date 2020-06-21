@@ -22,7 +22,7 @@ public class AgentsFactory implements IAgentFactory {
     public List<Intruder> createIntruders(int number) {
         ArrayList<Intruder> intruders = new ArrayList<>();
         for(int i=0;i<number;i++){
-            Intruder intruder = new TargetFinder(i);
+            Intruder intruder = new GreedyIntruderAgent(i);
             intruders.add(intruder);
         }
         return intruders;
