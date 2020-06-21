@@ -1,4 +1,4 @@
-package Group2;
+package Group2.Agents.LinearProgram;
 import java.util.Arrays;
 
 public class Simplex {
