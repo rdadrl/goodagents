@@ -46,20 +46,32 @@ public class LPGuard implements Interop.Agent.Guard {
      */
     private GuardAction[] roundActions = new GuardAction[2];
     private int currentRound = 0;
-
+    private int seenWalls, seenGuards, seenDoors, seenWindows, seenTeleports, seenSentryTowers;
     private boolean roundFinished = true;
     private boolean yelledThisRound = false;
     @Override
     public GuardAction getAction(GuardPercepts percepts) {
+        seenWalls = 0; seenGuards = 0; seenDoors = 0; seenWindows = 0; seenTeleports = 0; seenSentryTowers = 0;
         //always yell if intruder has been seen
-        if (!yelledThisRound) {
             for (ObjectPercept object : percepts.getVision().getObjects().getAll()) {
-                if (object.getType().equals(ObjectPerceptType.Intruder)) {
-                    yelledThisRound = true;
-                    return new Yell();
-                }
+                if(!yelledThisRound)
+                    if (object.getType().equals(ObjectPerceptType.Intruder)) {
+                        yelledThisRound = true;
+                        return new Yell();
+                    }
+                if(object.getType().equals(ObjectPerceptType.Wall))
+                    seenWalls++;
+                if(object.getType().equals(ObjectPerceptType.Guard))
+                    seenGuards++;
+                if(object.getType().equals(ObjectPerceptType.Door))
+                    seenDoors++;
+                if(object.getType().equals(ObjectPerceptType.Window))
+                    seenWindows++;
+                if(object.getType().equals(ObjectPerceptType.Teleport))
+                    seenTeleports++;
+                if(object.getType().equals(ObjectPerceptType.SentryTower))
+                    seenSentryTowers++;
             }
-        }
 
         if (roundFinished) {
             sectorsAvailable.clear();
@@ -87,6 +99,7 @@ public class LPGuard implements Interop.Agent.Guard {
             //Sector sectorBest <- highest scoring sector
 
             //rotationAngle <- relative angle from s + SECTOR_ANGLE / 2
+            assert sectorBest != null;
             double rotationAngle = sectorBest.getRelativeAngle() + (SECTOR_ANGLE / 2d);
             //movement <- always. LP makes sure to select a sector containing empty space to always allow for movements.
 
