@@ -13,7 +13,7 @@ public class Main {
         double x = 0;
         double y = 0;
         double sum = 0;
-        final double NUMBER_OF_RUNS = 3;
+        final double NUMBER_OF_RUNS = 10;
         for(int i=1; i <= NUMBER_OF_RUNS; i++) {
             Game game = new Game(Parser.parseFile("./src/main/java/Group9/map/maps/configSecond.map"), new OurAgentFactory(), false);
             game.run();
@@ -32,8 +32,8 @@ public class Main {
 
 
         }
-        System.out.printf("guard wins : %s\n", (x*2));
-        System.out.printf("intruder wins : %s\n", (y*2));
+        System.out.printf("guard wins : %s\n", (x*10));
+        System.out.printf("intruder wins : %s\n", (y*10));
         System.out.printf("average is : %s\n", sum/NUMBER_OF_RUNS);
 
     }

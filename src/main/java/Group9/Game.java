@@ -287,7 +287,7 @@ public class Game implements Runnable {
 
             }
         }
-     System.out.println("Actions performed "+ " "+ counter);
+     System.out.println( counter);
     }
     public int getCounter(){
         return counter;
@@ -302,7 +302,7 @@ public class Game implements Runnable {
         final long intrudersCaptured = intruders.stream().filter(IntruderContainer::isCaptured).count();
         final long intrudersWins = intruders.stream().filter(e -> e.getZoneCounter() >= settings.getTurnsInTargetAreaToWin()).count();
 
-        if((System.nanoTime()-startTime)/1000000000>5) {
+        if((System.nanoTime()-startTime)/1000000000> 10) {
             return Team.TIMEOUT;
         }
 

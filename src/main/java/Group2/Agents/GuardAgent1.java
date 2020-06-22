@@ -67,7 +67,7 @@ public class GuardAgent1 implements Guard {
 
     public GuardAgent1(int ID){
         this.ID = ID;
-        System.out.println("Made Guard "+ID);
+       // System.out.println("Made Guard "+ID);
     }
 
     int g = 1;
@@ -93,7 +93,7 @@ public class GuardAgent1 implements Guard {
                 chaseMode = true;
 
                 if(chaseCounter==0) {
-                    System.out.println(ID+" Intruder spotted");
+                //    System.out.println(ID+" Intruder spotted");
                     moveCounter = 0;
                     chaseCounter++;
                 }
@@ -110,7 +110,7 @@ public class GuardAgent1 implements Guard {
                     moveCounter = 0;
                     yellInvestigateMode = true;
                     investigationTurns = 0;
-                    System.out.println(ID+ " Yell Detected");
+                   // System.out.println(ID+ " Yell Detected");
                 }
             }
         }else{
@@ -137,7 +137,7 @@ public class GuardAgent1 implements Guard {
             intruder = null;
             turnsMissing = 0;
             chaseCounter = 0;
-            System.out.println(ID+" Chase stopped");
+           // System.out.println(ID+" Chase stopped");
         }
 
         //If you are patrolling but see another guard, look for new patrol route
@@ -167,7 +167,7 @@ public class GuardAgent1 implements Guard {
                 }else{
                     yellInvestigateMode = false;
                     investigationTurns = 0;
-                    System.out.println(ID+" Yell investigation stopped");
+                   // System.out.println(ID+" Yell investigation stopped");
                 }
             }
 
@@ -265,7 +265,7 @@ public class GuardAgent1 implements Guard {
 
             //initialize patrol
             if(patrolFound==true){
-                System.out.println(ID+" Setting up Patrol");
+               // System.out.println(ID+" Setting up Patrol");
                 patrolLength = moveCounter-patrolBuffer;
                 rotationLeft = defaultPatrolRotation;
                 patrolPhase = 1;

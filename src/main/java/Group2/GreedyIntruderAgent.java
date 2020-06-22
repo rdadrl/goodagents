@@ -27,7 +27,7 @@ public class GreedyIntruderAgent implements Intruder{
     public GreedyIntruderAgent(int ID){
         this.ID = ID;
         this.currentMap = new GridMap();
-        System.out.println("Made Intruder "+ID);
+       // System.out.println("Made Intruder "+ID);
     }
     public int in=1;
     @Override
