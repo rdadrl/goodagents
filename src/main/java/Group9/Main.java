@@ -13,9 +13,9 @@ public class Main {
         double x = 0;
         double y = 0;
         double sum = 0;
-        final double NUMBER_OF_RUNS = 50;
+        final double NUMBER_OF_RUNS = 3;
         for(int i=1; i <= NUMBER_OF_RUNS; i++) {
-            Game game = new Game(Parser.parseFile("./src/main/java/Group9/map/maps/config.map"), new OurAgentFactory(), false);
+            Game game = new Game(Parser.parseFile("./src/main/java/Group9/map/maps/configSecond.map"), new OurAgentFactory(), false);
             game.run();
             System.out.printf("The winner is: %s\n", game.getWinner());
             if(game.getWinner() == Game.Team.TIMEOUT){
@@ -32,8 +32,8 @@ public class Main {
 
 
         }
-        System.out.printf("guard wins : %s\n", (x/NUMBER_OF_RUNS));
-        System.out.printf("intruder wins : %s\n", (y/NUMBER_OF_RUNS));
+        System.out.printf("guard wins : %s\n", (x*2));
+        System.out.printf("intruder wins : %s\n", (y*2));
         System.out.printf("average is : %s\n", sum/NUMBER_OF_RUNS);
 
     }

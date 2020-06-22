@@ -1,0 +1,56 @@
+gameMode = 0
+height = 100
+width = 150
+numGuards = 4
+numIntruders = 1
+captureDistance = 0.5
+winConditionIntruderRounds = 1
+maxRotationAngle = 45.0
+maxMoveDistanceIntruder = 1.5
+maxSprintDistanceIntruder = 4.0
+maxMoveDistanceGuard = 1.5
+sprintCooldown = 2
+pheromoneCooldown = 3
+radiusPheromone = 5.0
+slowDownModifierWindow = 0.5
+slowDownModifierDoor = 0.5
+slowDownModifierSentryTower = 0.1
+viewAngle = 45.0
+viewRays = 45
+viewRangeIntruderNormal = 7.5
+viewRangeIntruderShaded = 4.0
+viewRangeGuardNormal = 6.0
+viewRangeGuardShaded = 3.5
+viewRangeSentry = 2.0, 20.0
+yellSoundRadius = 30.0
+maxMoveSoundRadius = 10.0
+windowSoundRadius = 10.0
+doorSoundRadius = 5.0
+pheromoneExpireRounds = 5
+
+wall = 0,0, 0,10, 150,10, 150,0
+wall = 140,0, 140,100, 150,100, 150,0
+wall = 0,90, 0,100, 150,100, 150,90
+wall = 0,0, 0,100, 10,100, 10,0
+
+// L bottom
+wall = 30,60, 40,70, 60,70, 60,60
+wall = 50,70, 50,90, 60,90, 60,70
+// L top
+
+//C
+wall = 80,30, 80,40, 110,40, 110,30
+wall = 100,40, 100,60, 110,60, 110,40
+wall = 80,60, 80,70, 110,70, 110,60
+
+
+
+
+
+//other
+spawnAreaGuards = 110,20, 110,30, 120,30, 120,20
+spawnAreaIntruders = 30,70, 30,80, 40,80, 40,70
+targetArea = 125,45, 125,55, 135,55, 135,45
+
+// teleportArea =  none
+// sentry = none

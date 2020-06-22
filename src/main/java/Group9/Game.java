@@ -302,7 +302,7 @@ public class Game implements Runnable {
         final long intrudersCaptured = intruders.stream().filter(IntruderContainer::isCaptured).count();
         final long intrudersWins = intruders.stream().filter(e -> e.getZoneCounter() >= settings.getTurnsInTargetAreaToWin()).count();
 
-        if((System.nanoTime()-startTime)/1000000000>10) {
+        if((System.nanoTime()-startTime)/1000000000>5) {
             return Team.TIMEOUT;
         }
 
