@@ -1,14 +1,14 @@
 gameMode = 0
 height = 100
 width = 150
-numGuards = 3
+numGuards = 2
 numIntruders = 1
 captureDistance = 0.5
 winConditionIntruderRounds = 1
 maxRotationAngle = 45.0
-maxMoveDistanceIntruder = 1.5
+maxMoveDistanceIntruder = 3.75
 maxSprintDistanceIntruder = 4.0
-maxMoveDistanceGuard = 1.5
+maxMoveDistanceGuard =  3.75
 sprintCooldown = 2
 pheromoneCooldown = 3
 radiusPheromone = 5.0
@@ -34,7 +34,7 @@ wall = 0,90, 0,100, 150,100, 150,90
 wall = 0,0, 0,100, 10,100, 10,0
 
 // L bottom
-wall = 30,60, 40,70, 60,70, 60,60
+wall = 30,60, 30,70, 60,70, 60,60
 wall = 50,70, 50,90, 60,90, 60,70
 // L top
 
@@ -49,7 +49,7 @@ wall = 80,60, 80,70, 110,70, 110,60
 
 //other
 spawnAreaGuards = 110,20, 110,30, 120,30, 120,20
-spawnAreaIntruders = 30,70, 30,80, 40,80, 40,70
+spawnAreaIntruders = 30,75, 30,85, 40,85, 40,75
 targetArea = 125,45, 125,55, 135,55, 135,45
 
 // teleportArea =  none
