@@ -10,9 +10,9 @@ public class Sector {
     private int id;
     private ArrayList<ObjectPerceptType> objectsInSector = new ArrayList<>();
 
-    private int relativeStartAngle;
+    private double relativeStartAngle;
 
-    public Sector(int relAngle) {
+    public Sector(double relAngle) {
         relativeStartAngle = relAngle;
         id = ++lastId;
     }
@@ -23,6 +23,8 @@ public class Sector {
     public void addContent(ObjectPerceptType objType) {
         objectsInSector.add(objType);
     }
+
+    public double getRelativeAngle() { return relativeStartAngle; }
 
     public int includesHowMany(ObjectPercept object) {
         int amount = 0;

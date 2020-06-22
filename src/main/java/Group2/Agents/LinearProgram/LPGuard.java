@@ -20,8 +20,14 @@ package Group2.Agents.LinearProgram;
  */
 
 import Interop.Action.GuardAction;
+import Interop.Action.Move;
+import Interop.Action.Rotate;
+import Interop.Action.Yell;
 import Interop.Agent.Guard;
+import Interop.Geometry.Angle;
 import Interop.Percept.GuardPercepts;
+import Interop.Percept.Vision.ObjectPercept;
+import Interop.Percept.Vision.ObjectPerceptType;
 
 import java.util.ArrayList;
 import java.util.Queue;
@@ -40,12 +46,32 @@ public class LPGuard implements Interop.Agent.Guard {
      */
     private GuardAction[] roundActions = new GuardAction[2];
     private int currentRound = 0;
-
+    private int seenWalls, seenGuards, seenDoors, seenWindows, seenTeleports, seenSentryTowers;
     private boolean roundFinished = true;
-
+    private boolean yelledThisRound = false;
     @Override
     public GuardAction getAction(GuardPercepts percepts) {
+        seenWalls = 0; seenGuards = 0; seenDoors = 0; seenWindows = 0; seenTeleports = 0; seenSentryTowers = 0;
         //always yell if intruder has been seen
+            for (ObjectPercept object : percepts.getVision().getObjects().getAll()) {
+                if(!yelledThisRound)
+                    if (object.getType().equals(ObjectPerceptType.Intruder)) {
+                        yelledThisRound = true;
+                        return new Yell();
+                    }
+                if(object.getType().equals(ObjectPerceptType.Wall))
+                    seenWalls++;
+                if(object.getType().equals(ObjectPerceptType.Guard))
+                    seenGuards++;
+                if(object.getType().equals(ObjectPerceptType.Door))
+                    seenDoors++;
+                if(object.getType().equals(ObjectPerceptType.Window))
+                    seenWindows++;
+                if(object.getType().equals(ObjectPerceptType.Teleport))
+                    seenTeleports++;
+                if(object.getType().equals(ObjectPerceptType.SentryTower))
+                    seenSentryTowers++;
+            }
 
         if (roundFinished) {
             sectorsAvailable.clear();
@@ -55,24 +81,41 @@ public class LPGuard implements Interop.Agent.Guard {
                 Sector currentSector = new Sector(i * SECTOR_ANGLE);
                 //TODO: Add sector entitites here:
                     //currentSector.addContent(someObject);
+                    //if yelledThisRound do not take into account heard yell.
                 //Done adding entities.
                 sectorsAvailable.add(currentSector);
             }
 
             //Inspect each sector using LP:
-
-            //Sector s <- highest scoring sector
+            double zBest = 0;
+            Sector sectorBest = null;
+            for (Sector sector : sectorsAvailable) {
+                double Z = solveLinearProgram(sector);
+                if (Z > zBest) {
+                    zBest = Z;
+                    sectorBest = sector;
+                }
+            }
+            //Sector sectorBest <- highest scoring sector
 
             //rotationAngle <- relative angle from s + SECTOR_ANGLE / 2
+            assert sectorBest != null;
+            double rotationAngle = sectorBest.getRelativeAngle() + (SECTOR_ANGLE / 2d);
             //movement <- always. LP makes sure to select a sector containing empty space to always allow for movements.
 
             //round[] <- {rotationAngle, movement}
+            roundActions[0] = new Rotate(Angle.fromDegrees(rotationAngle));
+            roundActions[1] = new Move(percepts.getScenarioGuardPercepts().getMaxMoveDistanceGuard());
+            currentRound = 0;
+            yelledThisRound = false;
         }
 
-        //Execute roundActions[currentRound++]
+        return roundActions[currentRound++];
+    }
 
-        //check if roundFinished
+    private double solveLinearProgram(Sector sec) {
+        double res = 0;
 
-        return null;
+        return res;
     }
 }
