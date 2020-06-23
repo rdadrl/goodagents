@@ -15,7 +15,7 @@ public class Main {
         double sum = 0;
         final double NUMBER_OF_RUNS = 10;
         for(int i=1; i <= NUMBER_OF_RUNS; i++) {
-            Game game = new Game(Parser.parseFile("./src/main/java/Group9/map/maps/configSecond.map"), new OurAgentFactory(), false);
+            Game game = new Game(Parser.parseFile("./src/main/java/Group9/map/maps/configMod.map"), new OurAgentFactory(), false);
             game.run();
             System.out.printf("The winner is: %s\n", game.getWinner());
             if(game.getWinner() == Game.Team.TIMEOUT){
