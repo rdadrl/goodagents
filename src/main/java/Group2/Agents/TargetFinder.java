@@ -6,6 +6,7 @@ import Group2.Map.Node;
 import Group2.Map.PathFinding;
 import Interop.Action.IntruderAction;
 import Interop.Action.Move;
+import Interop.Action.NoAction;
 import Interop.Action.Rotate;
 import Interop.Agent.Intruder;
 import Interop.Geometry.Angle;
@@ -48,6 +49,8 @@ public class TargetFinder implements Intruder {
     private boolean inBack = false;
     private int counter;
 
+    private int turnsBeforeTeleporting = 1000;
+
     int in=1;
     @Override
     public IntruderAction getAction(IntruderPercepts percepts) {
@@ -56,9 +59,7 @@ public class TargetFinder implements Intruder {
         //System.out.println("View Angle in degrees: " + percepts.getTargetDirection().getDegrees());
         Angle maxRotationAngle = percepts.getScenarioIntruderPercepts().getScenarioPercepts().getMaxRotationAngle();
 
-
-//        //Drop a pheromone if there is a guard nearby to warn the other intruders
-//        if(isGuard(percepts)) return new DropPheromone(SmellPerceptType.Pheromone1);
+        //if(percepts.getAreaPercepts().isJustTeleported()) goalCoord = null;
 
 
         if(goalCoord == null) {
@@ -83,11 +84,7 @@ public class TargetFinder implements Intruder {
                     inFront = true;
                     goalInitAngle = 360 - goalInitAngle;
                 }
-                //System.out.println("u = " + u.getValue());
-                //System.out.println("selfPoint1 = " + selfPoint1);
-                //System.out.println("goalInitAngle = " + goalInitAngle);
-                //System.out.println("toLeft = " + toLeft);
-                //take step u
+
                 action = new Move(u);
                 this.currentMap.updateMap(action, percepts);
                 //System.out.println(currentMap);
@@ -96,35 +93,32 @@ public class TargetFinder implements Intruder {
 
             if(selfPoint1 != null && selfPoint2 == null) {
                 selfPoint2 = this.currentMap.getCurrentPosition();
-                //System.out.println("selfPoint2 = " + selfPoint2);
                 if (toRight){
                     goalStepAngle = 180 - (360 - percepts.getTargetDirection().getDegrees());
-                    //System.out.println("StepAngle = " + goalStepAngle);
 
                 } else if (toLeft) {
                     goalStepAngle = 180 - percepts.getTargetDirection().getDegrees();
-                    //System.out.println("StepAngle = " + goalStepAngle);
                 }
 
                 //calc point coords with respect to the origin
                 double goalCornerAngle = 180 - goalInitAngle - goalStepAngle;
-                //System.out.println("goalCornerAngle = " + goalCornerAngle);
                 double stepLength = u.getValue();
-                //System.out.println("Steplength aka u: " + stepLength);
                 double stepOverGoal = (Math.sin(goalStepAngle) / Math.sin(goalCornerAngle));
-                //System.out.println("StepOverGoal: " + stepOverGoal);
-                //System.out.println("times steplength: " +  1.4 * stepOverGoal );
                 double distOriginToGoal = stepLength * (Math.abs(Math.sin(Math.toRadians(goalStepAngle))) / Math.abs(Math.sin(Math.toRadians(goalCornerAngle))) );
-                //System.out.println("disttoGoal: " + distOriginToGoal);
                 if (toRight) {
                     goalCoord = new Point((distOriginToGoal * (Math.cos(Math.toRadians(goalInitAngle)))), (-1)*(distOriginToGoal * (Math.sin(Math.toRadians(goalInitAngle)))));
                 } else if (toLeft) {
                     goalCoord = new Point((distOriginToGoal * Math.cos(Math.toRadians(goalInitAngle))), (distOriginToGoal * Math.sin(Math.toRadians(goalInitAngle))) );
                 }
-                //System.out.println("Goal coordinates are: " + goalCoord);
                 this.currentMap.setTargetPosition(goalCoord);
-                if(goalCoord.getX() <= 0) this.currentMap.extendMapToLeft(50);
-                if(goalCoord.getY() <= 0) this.currentMap.extendMapToBottom(50);
+                if(goalCoord.getX() <= 0) {
+                    while(this.currentMap.getTargetPosition().getX() < 0)
+                        this.currentMap.extendMapToLeft(50);
+                }
+                if(goalCoord.getY() <= 0) {
+                    while(this.currentMap.getTargetPosition().getY() < 0)
+                        this.currentMap.extendMapToBottom(50);
+                }
             }
         }
 
@@ -149,7 +143,13 @@ public class TargetFinder implements Intruder {
         if (path.size() < subPathSize) subTarget = new Point(targetPos.getX(), targetPos.getY());
         else subTarget = new Point(path.get(subPathSize-1).getPos().getX(), path.get(subPathSize-1).getPos().getY());
 
+        //System.out.println(path);
 
+        //The intruder has been standing in the computed target area location for 10 turns
+        //This means that the target area is on another level and we need a teleport in order to reach it
+//        if(turnsBeforeTeleporting <= 0) {
+//            return findTeleport(percepts);
+//        }
 
         double deltaX = subTarget.getX() - sourcePos.getX();
         double deltaY = subTarget.getY() - sourcePos.getY();
@@ -164,36 +164,25 @@ public class TargetFinder implements Intruder {
 
 
         //Distance angle between subtarget and agent's direction (i.e. angle the agent needs to rotate from to reach the point)
-        //Angle rotationAngle = targetAngle.getDistance(agentDirection);
-        //if(targetAngle.getDegrees() < agentDirection.getDegrees()) rotationAngle = Angle.fromDegrees(-rotationAngle.getDegrees());
-        //if(deltaX > 0) rotationAngle = Angle.fromDegrees(-rotationAngle.getDegrees());
-
         Angle rotationAngle = Angle.fromDegrees((targetAngle.getDegrees() - agentDirection.getDegrees())%360);
         while(rotationAngle.getDegrees() < -180) rotationAngle = Angle.fromDegrees(rotationAngle.getDegrees()+360);
 
-        //System.out.println();
-        //System.out.println();
-        //System.out.println("Agent's direction: " +agentDirection.getDegrees());
-        //System.out.println("Target angle: "+targetAngle.getDegrees());
-        //System.out.println("Rotation angle: " +rotationAngle.getDegrees());
+
+
         //Angle of rotation is very small, move forward
         if (Math.abs(rotationAngle.getDegrees()) < 3) {
-            //System.out.println("FORWARD");
             action = new Move(maxDistance);
         }
         //Angle of rotation is bigger than the maximum angle, rotate from the largest angle possible
         else if (rotationAngle.getDegrees() > maxRotationAngle.getDegrees()) {
-            //System.out.println("MAX");
             action = new Rotate(maxRotationAngle);
         }
         //Angle of rotation is smaller than -maximum angle, rotate from the smallest angle possible
         else if (rotationAngle.getDegrees() < -maxRotationAngle.getDegrees()) {
-            //System.out.println("MIN");
             action = new Rotate(Angle.fromDegrees(-maxRotationAngle.getDegrees()));
         }
         //Rotate from the rotation angle
         else {
-            //System.out.println("ANGLE");
             action = new Rotate(rotationAngle);
         }
 
@@ -202,7 +191,7 @@ public class TargetFinder implements Intruder {
         this.currentMap.updateMap(action, percepts);
 
         //System.out.println(currentMap);
-        System.out.println("number of INTRUDER actions"+" "+ in);
+        //System.out.println("number of INTRUDER actions"+" "+ in);
 
         return action;
     }
@@ -248,6 +237,35 @@ public class TargetFinder implements Intruder {
             if(objectPercept.getType()== ObjectPerceptType.Guard) return true;
         }
         return false;
+    }
+
+
+    /**
+     * Method that makes the intruder explore the map if it does not know where the teleport is sets it as the target
+     * if it finds it. This is called if the target area needs a teleport in order to be reached
+     * @param percepts, the intruder's percepts
+     * @return No Action if the intruder knows where the teleport is, a random exploration action otherwise
+     */
+    public IntruderAction findTeleport(IntruderPercepts percepts) {
+
+        //Check if the intruder knows where the teleport is
+        ObjectPerceptType[][] gridMap = this.currentMap.getCurrentMap();
+        for(int i=0; i<gridMap.length; i++) {
+            for(int j=0; j<gridMap[0].length; j++) {
+                if(gridMap[i][j] == ObjectPerceptType.Teleport) {
+
+                    //Intruder knows location of teleport, set this as the new target
+                    this.currentMap.setTargetPosition(new Point(j, i));
+                    turnsBeforeTeleporting = 1000;
+                    return new NoAction();
+                }
+            }
+        }
+
+        //The intruder does not know where the teleport is, explore the map randomly to find it
+        Morontruder randomIntruder = new Morontruder();
+        return randomIntruder.getAction(percepts);
+
     }
 
 
