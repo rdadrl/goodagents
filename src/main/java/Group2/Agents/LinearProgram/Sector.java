@@ -8,7 +8,7 @@ import java.util.ArrayList;
 public class Sector {
     protected static int lastId = 0;
     private int id;
-    private ArrayList<ObjectPerceptType> objectsInSector = new ArrayList<>();
+    private ArrayList<String> objectsInSector = new ArrayList<>();
 
     private double relativeStartAngle;
 
@@ -18,19 +18,22 @@ public class Sector {
     }
 
     public void addContent(ObjectPercept obj) {
-        objectsInSector.add(obj.getType());
+        objectsInSector.add(obj.getType().name());
+    }
+    public void addContent(String typeName) {
+        objectsInSector.add(typeName);
     }
     public void addContent(ObjectPerceptType objType) {
-        objectsInSector.add(objType);
+        objectsInSector.add(objType.name());
     }
 
     public double getRelativeAngle() { return relativeStartAngle; }
 
-    public int includesHowMany(ObjectPercept object) {
+    public int includesHowMany(String objectName) {
         int amount = 0;
 
-        for (ObjectPerceptType sectorContent : objectsInSector) {
-            if (object.getType().equals(sectorContent)) {
+        for (String sectorContent : objectsInSector) {
+            if (objectName.equals(sectorContent)) {
                 amount++;
             }
         }
@@ -42,5 +45,14 @@ public class Sector {
 
     public int getID() {
         return id;
+    }
+
+    public String toString() {
+        String res = "Sector " + id + "at angle " + relativeStartAngle + ": {";
+        for (String type : objectsInSector) {
+            res += ("\n\t" + type);
+        }
+
+        return res + "\n}";
     }
 }
